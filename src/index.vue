@@ -16,7 +16,7 @@ import PostList from './_components/PostList.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import Loading from './_components/Loading.vue'
 
-const perPage = 3
+const perPage = 10
 const currentPage = ref(1)
 const currentPosts = ref(postsData.slice(0, perPage))
 
