@@ -7,6 +7,11 @@ tags:
 date: 2024-05-04 21:19:10
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600253153' />
 
 开发一个 Node.js CLI 脚手架，是创建高效开发工具的重要一步。本文将从基础概念入手，逐步深入开发过程，并以最小依赖实现第一个 CLI 工具。
 
@@ -236,4 +241,3 @@ console.log(chalk.green('Success!'));
 最后，分享一个自己开发的 Node.js CLI 工具：
 
 [douban-scanner](https://www.npmjs.com/package/douban-scanner) —— 豆瓣扫描器，一个用来抓取豆瓣 “书影音” 数据的 CLI 工具
-

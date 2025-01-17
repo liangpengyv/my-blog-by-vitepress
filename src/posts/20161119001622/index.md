@@ -7,6 +7,12 @@ tags:
 date: 2016-11-18 16:16:22
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600207240' />
+
 让我们先来回顾一下Java中的一些特性 ~~
 
 ## **一切都是对象**

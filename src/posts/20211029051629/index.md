@@ -7,6 +7,12 @@ tags:
 date: 2021-10-28 21:16:29
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600230269' />
+
 在 JavaScript 中，导入模块的方式根据使用的模块规范（如 CommonJS、ESM 等）有所不同。下面介绍几种常见的导入方式：
 
 ## 1. CommonJS 模块导入
@@ -105,4 +111,3 @@ require(['./myModule'], function (myModule) {
 -	简单静态页面：直接使用全局变量导入。
 
 如需在 ESM 和 CommonJS 间兼容，你可能需要配置工具（如 Rollup、Webpack）或添加 .cjs、.mjs 文件后缀来区分模块类型。
-

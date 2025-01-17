@@ -7,6 +7,12 @@ tags:
 date: 2023-01-02 17:21:53
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600235592' />
+
 > 与浏览器不同，mac 的终端默认并没有开启代理模式，也就是说即使我们电脑安装了代理客户端，在终端中也是无法使用代理的。下面通过样例演示如何对终端配置网络代理。
 
 ## 1. 确定客户端端口

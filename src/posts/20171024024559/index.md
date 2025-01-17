@@ -7,6 +7,12 @@ tags:
 date: 2017-10-23 18:45:59
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600208754' />
+
 ![采铜-好书精读](https://github.com/user-attachments/assets/b5dd20fb-796d-4134-8bf5-767d12a6694b)
 
 查理芒格认为，现实世界的种种问题，很少是正好落在某一个学科的界限里面的，而往往是横跨多个学科的。但是我们传统的教育又是以学科和专业划界来培养人才。你是哪个专业的，你就只了解这个专业的知识，对别的学科知识一窍不通。一个心理学专业的人，一般不会懂经济学，而一个经济学专业的人，一般也不会懂心理学。但是当你在现实世界中要解决问题的时候，就发现这种狭窄的知识结构很成问题。

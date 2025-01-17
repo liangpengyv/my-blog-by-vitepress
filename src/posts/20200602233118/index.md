@@ -7,6 +7,12 @@ tags:
 date: 2020-06-02 15:31:18
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600217392' />
+
 JavaScript 的对象系统是这个语言的基石之一。随着 JavaScript 的不断演进，对象创建的方式也在逐步丰富。本篇将带你回顾 JavaScript 中创建对象的多种方式，从早期的经典用法到现代的高级特性。
 
 ## 1. 最基础的对象字面量
@@ -187,4 +193,3 @@ JavaScript 对象的创建方式，从最简单的字面量，到构造函数模
 -	私有属性：提高封装性
 
 未来，随着 JavaScript 的持续发展，我们可能会看到更多对象相关的新特性被引入。希望这篇博客能帮助你理清思路，选择最适合的方式来创建和管理对象。
-

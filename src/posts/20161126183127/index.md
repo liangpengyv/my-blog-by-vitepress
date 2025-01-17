@@ -7,6 +7,12 @@ tags:
 date: 2016-11-26 10:31:27
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600208412' />
+
 > 如果一个select语句能够返回单个值或者一列值，且该select语句嵌套在另一个SQL语句（例如select语句、insert语句、update语句或者delete语句）中，那么该select语句成为“子查询”（也叫内层查询），包含子查询的SQL语句称为“主查询”（也叫外层查询）。为了标记子查询与主查询之间的关系，通常将子查询写在小括号内。子查询一般用在主查询的where子句或having子句中，与比较运算符或者逻辑运算符一起构成where筛选条件或having筛选条件。子查询分为“相关子查询”（Dependent Subquery）与“非相关子查询”。
 
 ## **非相关子查询**

@@ -1,4 +1,5 @@
 import fse from 'fs-extra'
+import frontmatter from 'front-matter'
 import { Post } from '../types/post'
 
 const generatePosts = async () => {
@@ -6,7 +7,7 @@ const generatePosts = async () => {
   for (const post of posts) {
     await fse.outputFile(
       `src/posts/${formatDate(new Date(post.created_at))}/index.md`,
-      post.content,
+      parsePostContent(post),
     )
   }
 }
@@ -21,6 +22,27 @@ const formatDate = (date: Date) => {
     pad(date.getMinutes()) +
     pad(date.getSeconds())
   )
+}
+
+const parsePostContent = (post: Post) => {
+  const insertContent = `
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='${post.id}' />
+`
+
+  const frontmatterObj = frontmatter(post.content)
+  console.log(frontmatterObj)
+
+  return `
+---
+${frontmatterObj.frontmatter}
+---
+${insertContent}
+${frontmatterObj.body}
+`.trim()
 }
 
 const main = async () => {

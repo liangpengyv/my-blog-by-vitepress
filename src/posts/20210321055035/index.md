@@ -7,6 +7,12 @@ tags:
 date: 2021-03-20 21:50:35
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600227503' />
+
 > 我们知道，将 JavaScript 插入 HTML 的主要方法是使用 `<script>` 元素。这个元素是由网景公司创造出来，并最早在 Netscape Navigator 2 中实现的。后来，这个元素被正式加入到 HTML 规范。
 >
 > 为了更好地了解 JavaScript 在 HTML 中的加载情况，我们先简单介绍一些基础知识。
@@ -142,4 +148,3 @@ HTML5 为 `<script>` 元素定义了 `async` 属性。从改变脚本处理方�
 ## 总结
 
 我们知道 `<script>` 标签是在网页中使用 JavaScript 的最根本的机制，所以，对这些加载时机和各种属性的理解，对我们将来做性能优化和提升脚本的安全性是非常重要的。
-

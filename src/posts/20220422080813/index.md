@@ -7,6 +7,12 @@ tags:
 date: 2022-04-22 00:08:13
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600232400' />
+
 ## 前言
 
 默认的 PowerShell 提示符丑？

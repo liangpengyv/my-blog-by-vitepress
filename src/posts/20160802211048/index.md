@@ -7,6 +7,12 @@ tags:
 date: 2016-08-02 13:10:48
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600205526' />
+
 上一次我们介绍了 Git 的环境配置和创建本地版本库本节我们一起来看 Git 的更多使用技巧。
 
 ## **忽略文件**

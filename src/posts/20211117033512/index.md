@@ -7,6 +7,12 @@ tags:
 date: 2021-11-16 19:35:12
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600230609' />
+
 在 JavaScript 的异步机制中，“宏任务”（Macro Task）和“微任务”（Micro Task）扮演着非常重要的角色。特别是当我们使用 Vue 2 或 Vue 3 进行前端开发时，nextTick 这个 API 与它们密切相关。本文将由浅入深，带你理解它们的区别，以及 nextTick 在 Vue 中的应用。
 
 ## 一、宏任务与微任务：事件循环的基础
@@ -158,4 +164,3 @@ Vue 3 内部根据环境决定使用何种微任务，比如优先使用 queueMi
 - nextTick 是 Vue 中用于确保 DOM 更新完成后执行回调的工具。在 Vue 2 中，它是实例方法，而在 Vue 3 中，它变成了顶层导出的函数。
 
 了解了宏任务、微任务和 nextTick 后，你就能更好地掌握 Vue 的异步更新机制，写出更高效的代码！
-

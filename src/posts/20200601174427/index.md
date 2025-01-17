@@ -7,6 +7,12 @@ tags:
 date: 2020-06-01 09:44:27
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600217304' />
+
 在 JavaScript 的数组操作中，forEach 是我们经常使用的遍历方法。然而，当我们需要在遍历过程中 提前退出（如遇到特定条件时停止迭代）时，forEach 却无法像 for 循环那样通过 break 或 return 来中断。这种不可中断性经常会给开发者带来困惑。本文将详细介绍 forEach 的特性、工作机制，并给出一些替代方案，帮助你在合适的场景下做出更优的选择。
 
 ## 1. forEach 的基本使用
@@ -141,4 +147,3 @@ forEach 是一个简洁的遍历工具，但它的不可中断性让它在某些
 在选择工具时，请记住 MDN 的建议：“如果有中断遍历的需求，不应该使用 forEach()。” 了解并合理使用 JavaScript 的不同遍历方式，能够帮助你写出更加高效、清晰的代码。
 
 想了解更多细节，请参考 MDN 的官方文档：[Array.prototype.forEach()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)。
-

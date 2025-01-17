@@ -7,6 +7,12 @@ tags:
 date: 2022-11-21 20:33:23
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600234163' />
+
 在 JavaScript 中，迭代器是一个非常强大的工具。它允许我们逐步遍历集合中的元素，如数组、字符串、Map 等。然而，除了使用内置的迭代器（如 for...of、Array.prototype.entries() 等），我们还可以手动实现自己的迭代器来满足特殊需求。今天我们就从零开始，逐步带你了解如何实现一个 JavaScript 迭代器。
 
 ## 一、什么是迭代器？

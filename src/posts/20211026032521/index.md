@@ -7,6 +7,12 @@ tags:
 date: 2021-10-25 19:25:21
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600228610' />
+
 ## 前言
 
 你是否在开发前后端分离项目时遇到过 **跨域资源共享 (CORS)** 的报错？  
@@ -196,4 +202,3 @@ CORS 是现代 Web 开发中的重要机制，它帮助浏览器保护用户数�
 3. 在开发环境中使用代理或临时禁用 CORS 检查，提升调试效率。
 
 希望这篇文章能帮助你彻底搞懂 CORS，并在开发过程中得心应手。如果你遇到其他跨域问题，欢迎在评论区交流！
-

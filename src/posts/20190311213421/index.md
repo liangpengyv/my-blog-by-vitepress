@@ -7,6 +7,12 @@ tags:
 date: 2019-03-11 13:34:21
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600216982' />
+
 ## Synchronized （Java 关键字）
 
 > **作用：** 能够保证在**同一时刻**最多只有**一个线程**执行该段代码，以达到保证并发安全的效果。
@@ -515,4 +521,3 @@ date: 2019-03-11 13:34:21
 #### 11. 简单表述一下 Java 的异常机制
 
 #### 12. 线上使用的哪个版本 JDK， 为什么使用这个版本（有什么特色）
-

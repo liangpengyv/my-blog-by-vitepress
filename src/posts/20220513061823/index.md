@@ -7,6 +7,12 @@ tags:
 date: 2022-05-12 22:18:23
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600234041' />
+
 要基于 axios 手写一个文件上传组件，并实现以下功能：
 
 1. 选择文件并上传

@@ -7,6 +7,12 @@ tags:
 date: 2016-08-03 13:10:48
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600205998' />
+
 现在的你对于 Git 应该完全不会感到陌生了吧，通过之前两节内容的学习，你已经掌握了很多 Git 中常用的命令，像提交代码这种简单的操作相信肯定是难不倒你的。
 
 那么打开 ``Git Bash``，在指定目录创建项目的跟目录，然后执行提交操作：

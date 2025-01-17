@@ -7,6 +7,12 @@ tags:
 date: 2016-08-01 13:10:48
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600205337' />
+
 ## **为什么要写此系列教程**
 
 我是一个有着严重拖延的人，对于新鲜事物很感兴趣，但是执行力很差。编辑此篇教程既是对自己学习新工具的总结，更是对自己办事执行力上的考验。

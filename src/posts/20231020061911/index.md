@@ -7,6 +7,12 @@ tags:
 date: 2023-10-19 22:19:11
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600239146' />
+
 ## 1. 轮询（Polling）—— 简单直接的老方法
 
 轮询是一种最基础的通信方式，客户端定期向服务器发送 HTTP 请求，询问是否有新数据。
@@ -152,4 +158,3 @@ HTTP/2 Push 是 HTTP/2 协议中的一项功能，允许服务器在客户端请
 | WebSocket | 双向通信，实时性高 | 实现复杂 | 在线游戏、协作工具 |
 | SSE | 实现简单，支持自动重连 | 单向通信 | 数据监控、实时新闻 |
 | HTTP/2 Push | 优化资源加载 | 需要 HTTP/2 支持 | 前端性能优化 |
-

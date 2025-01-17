@@ -7,6 +7,12 @@ tags:
 date: 2016-08-04 13:10:48
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600206104' />
+
 *注：本文引自图灵社区系列杂志《码农·进击的Java（总第16期）》，部分有删减，仅用于个人备忘笔记及交流使用*
 
 > 作者/颜海镜

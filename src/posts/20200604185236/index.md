@@ -7,6 +7,12 @@ tags:
 date: 2020-06-04 10:52:36
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600217490' />
+
 在 JavaScript 中，`apply`、`call` 和 `bind` 方法都是为了改变某个函数运行时的上下文（context）而存在的，换句话说，就是为了改变函数体内部 `this` 的指向。
 
 ## 改变 this 指向
@@ -135,4 +141,3 @@ Function.prototype.myBind = function (context) {
 }
 getName.myBind(obj, 1, 2)()  // 预期输出：ObjName 1 2
 ```
-

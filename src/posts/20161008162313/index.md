@@ -7,6 +7,12 @@ tags:
 date: 2016-10-08 08:23:13
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600207015' />
+
 ![丢手机实验](https://github.com/user-attachments/assets/e01f3888-ac67-4db9-b1c9-fd365671c79d)
 
 **受一篇文章启发，我也尝试进行了这样一场“48小时彻底离开手机和网络”的实验。下面是我在这个过程中随手记下的感受。**

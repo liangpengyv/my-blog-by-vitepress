@@ -7,6 +7,12 @@ tags:
 date: 2021-03-06 09:45:02
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600220031' />
+
 ## Vue 数据双向绑定原理
 
 Vue 数据双向绑定是通过 **数据劫持** 结合 **发布者-订阅者模式** 的方式来实现的。
@@ -389,4 +395,3 @@ MyVue.prototype = {
 ## 完整源码
 
 完整源码请点击 [👆GitHub-vue-mvvm](https://github.com/liangpengyv/vue-mvvm) 查看
-

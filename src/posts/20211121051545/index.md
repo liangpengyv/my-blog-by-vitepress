@@ -7,6 +7,12 @@ tags:
 date: 2021-11-20 21:15:45
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600231364' />
+
 在前端开发中，**防抖（Debounce）和节流（Throttle）**是两个优化频繁操作的常用技巧。它们主要用于减少高频率触发的事件处理次数，提升性能。本文将由浅入深地介绍这两者的原理、实现方式及应用场景，并比较它们的异同。
 
 ## 一、为什么需要防抖与节流？
@@ -138,4 +144,3 @@ function debounceThrottle(func, delay, interval) {
 七、总结
 
 防抖和节流是前端开发中的重要性能优化手段，能有效减少不必要的事件处理。防抖适用于停止操作后的处理逻辑，节流适用于持续操作的限频处理。理解两者的异同与应用场景，能帮助我们编写更加高效的代码。
-

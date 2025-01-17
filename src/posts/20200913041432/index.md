@@ -7,6 +7,12 @@ tags:
 date: 2020-09-12 20:14:32
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600217574' />
+
 ## 1. 开篇：啥子是 git stash？
 
 你在开发时是不是遇到过这种情况：代码改了一半，突然有个紧急任务来了，比如老板喊你切换到另一个分支修个 Bug。问题来了，你这没提交的代码咋办？提交了怕污染代码库，不提交又不想丢掉。

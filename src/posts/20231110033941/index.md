@@ -7,6 +7,12 @@ tags:
 date: 2023-11-09 19:39:41
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600252953' />
+
 > 前段时间想做一个小工具 APP，考虑想用 Flutter 实现，于是去看了看 Dart 语言，发现一个比较有意思的特性 —— “空安全”，这里和大家聊一聊。
 > 
 

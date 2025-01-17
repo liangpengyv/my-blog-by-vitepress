@@ -7,6 +7,12 @@ tags:
 date: 2021-03-13 22:37:31
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600222034' />
+
 > 团队开发中，遵循一个合理、清晰的Git使用流程，是非常重要的
 >
 > 否则，每个人都提交一堆杂乱无章的commit，项目很快就会变得难以协调和维护
@@ -111,4 +117,3 @@ git push origin -d feature/xxx
 # 再删除本地特性分支
 git branch -d feature/xxx
 ```
-

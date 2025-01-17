@@ -7,6 +7,12 @@ tags:
 date: 2022-11-22 23:13:11
 ---
 
+<script setup lang="ts">
+import PostHeader from '../../_components/PostHeader.vue'
+</script>
+
+<PostHeader :postId='2600234282' />
+
 **关键路径渲染（Critical Rendering Path，CRP）** 是指浏览器将 HTML、CSS 和 JavaScript 解析为可视页面的过程。CRP 的优化直接影响 **页面的首次内容呈现时间** 和用户的 **加载体验**。在现代前端开发中，减少关键路径渲染的时间已成为提升网页性能的关键环节。本文将逐步讲解 CRP 的工作原理，并提供实用的优化策略。
 
 ## 一、什么是关键路径渲染（CRP）？
