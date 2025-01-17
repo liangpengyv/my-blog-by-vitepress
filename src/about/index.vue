@@ -11,10 +11,10 @@
     <p>✈️ 旅行</p>
 
     <h3>😳 小时候</h3>
-    <p>喜欢守着工具箱，搞搞小制作🛠️</p>
+    <p>喜欢守着工具箱，搞搞小制作 ⚙️</p>
 
     <h3>🧐 长大了</h3>
-    <p>喜欢守在电脑前，敲着 printf(“Hello world”) 🔤</p>
+    <p>喜欢守在电脑前 🖥️，敲着 <code>printf(“Hello world”)</code></p>
   </div>
 </template>
 
