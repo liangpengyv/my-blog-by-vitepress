@@ -9,6 +9,10 @@ export default defineConfig({
 
   srcDir: 'src',
   cleanUrls: true,
+  sitemap: {
+    hostname: 'https://test.laoliang.ink/',
+  },
+
   markdown: {
     config: (md) => {
       md.use(markdownItTaskCheckbox)
