@@ -9,7 +9,9 @@ date: 2016-11-25 20:57:23
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600207645' />
 
@@ -47,3 +49,6 @@ public class Wind extends Instrument {
 ### **再论组合与继承**
 
 在面向对象编程中，生成和使用程序代码最有可能采用的方法就是直接将数据和方法包装进一个类中，并使用该类的对象。也可以运用组合技术使用现有类来开发新的类；而继承技术其实是不太常用的。因此尽管在教授OOP的过程中我们多次强调继承，但这并不意味着要尽可能使用它。相反应当慎用这一技术，其使用场合仅限于你确信使用该技术确实有效的情况。**到底是该用组合还是用继承，一个最清晰的判断方法就是问一问自己是否需要从新类向基类进行向上转型。**如果必须向上转型，则继承是必要的；但如果不需要，则应当好好考虑自己是否需要继承。
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/8' lastUpdated='2024-10-20 17:05:36' />

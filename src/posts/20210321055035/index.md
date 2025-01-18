@@ -9,7 +9,9 @@ date: 2021-03-20 21:50:35
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600227503' />
 
@@ -148,3 +150,7 @@ HTML5 为 `<script>` 元素定义了 `async` 属性。从改变脚本处理方�
 ## 总结
 
 我们知道 `<script>` 标签是在网页中使用 JavaScript 的最根本的机制，所以，对这些加载时机和各种属性的理解，对我们将来做性能优化和提升脚本的安全性是非常重要的。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/21' lastUpdated='2024-10-20 17:29:50' />

@@ -9,7 +9,9 @@ date: 2022-11-21 20:33:23
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600234163' />
 
@@ -152,3 +154,6 @@ console.log(fib.next().value); // 8
 2. 迭代器：实现了 next() 方法的对象，每次调用 next() 返回一个 { value, done } 对象。
 
 **总结：** 可迭代对象内部使用迭代器来实现元素的逐个访问。for...of 只是对迭代器的一种封装。
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/32' lastUpdated='2024-10-20 17:34:22' />

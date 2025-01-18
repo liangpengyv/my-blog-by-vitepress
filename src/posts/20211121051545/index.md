@@ -9,7 +9,9 @@ date: 2021-11-20 21:15:45
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600231364' />
 
@@ -144,3 +146,7 @@ function debounceThrottle(func, delay, interval) {
 七、总结
 
 防抖和节流是前端开发中的重要性能优化手段，能有效减少不必要的事件处理。防抖适用于停止操作后的处理逻辑，节流适用于持续操作的限频处理。理解两者的异同与应用场景，能帮助我们编写更加高效的代码。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/26' lastUpdated='2024-10-20 17:31:30' />

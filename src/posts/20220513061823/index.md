@@ -9,7 +9,9 @@ date: 2022-05-12 22:18:23
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600234041' />
 
@@ -139,3 +141,5 @@ app.listen(3000, () => {
 ```
 
 这个组件实现了完整的文件上传流程，你还可以根据需要进一步定制，比如支持多个文件、添加更多的上传校验等。
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/31' lastUpdated='2024-10-20 17:34:05' />

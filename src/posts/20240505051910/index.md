@@ -9,7 +9,9 @@ date: 2024-05-04 21:19:10
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600253153' />
 
@@ -241,3 +243,7 @@ console.log(chalk.green('Success!'));
 最后，分享一个自己开发的 Node.js CLI 工具：
 
 [douban-scanner](https://www.npmjs.com/package/douban-scanner) —— 豆瓣扫描器，一个用来抓取豆瓣 “书影音” 数据的 CLI 工具
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/38' lastUpdated='2024-10-20 17:46:54' />

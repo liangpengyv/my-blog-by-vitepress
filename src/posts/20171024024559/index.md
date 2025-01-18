@@ -9,7 +9,9 @@ date: 2017-10-23 18:45:59
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600208754' />
 
@@ -28,3 +30,6 @@ import PostHeader from '../../_components/PostHeader.vue'
 这些模型就组成了芒格所说的“多元思维模型”。这些模型正是我们每个人都应该掌握的“普世价值”。
 
 > 以上内容摘自：【采铜-好书精读】——《穷查理宝典》：三个核心思维方法，吸收巴菲特搭档的人生智慧
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/10' lastUpdated='2024-10-20 17:08:23' />

@@ -4,6 +4,8 @@ export interface Comment {
 
 export interface Post {
   id: number
+  number: number
+  html_url: string
   title: string
   category: string | undefined
   tags: string[]

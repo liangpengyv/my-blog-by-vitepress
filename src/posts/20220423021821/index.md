@@ -9,7 +9,9 @@ date: 2022-04-22 18:18:21
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600233413' />
 
@@ -113,3 +115,7 @@ git config --global i18n.logoutputencoding utf-8
 系统设置 -> 管理语言设置，打开旧版的区域设置窗口
 
 更改系统区域设置 -> Beta 版：使用 Unicode UTF-8 提供全球语言支持，勾选它，重启✅
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/30' lastUpdated='2024-11-16 19:37:50' />

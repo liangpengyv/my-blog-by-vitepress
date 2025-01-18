@@ -9,7 +9,9 @@ date: 2023-11-09 19:39:41
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600252953' />
 
@@ -149,3 +151,5 @@ TypeScript 2.0 增加了对 **不可为空类型** 的支持。有一种新的 *
 - 可以将原本运行时的空值引用错误，变为编译时的分析错误
 - 增强程序的健壮性，有效避免由Null而导致的崩溃
 - 由于空安全特性的存在，编译层面可以做很多优化
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/37' lastUpdated='2024-10-20 17:46:35' />

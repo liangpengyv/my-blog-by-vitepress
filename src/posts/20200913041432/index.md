@@ -9,7 +9,9 @@ date: 2020-09-12 20:14:32
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600217574' />
 
@@ -124,3 +126,6 @@ git commit -m "解决冲突"
 ## 6. 结语：工具虽小，管用就行
 
 git stash 这个命令看起简单，但在开发工作中真是个大救星！它让你不再因为各种紧急情况而打乱手头的代码节奏。只要掌握好 stash 的基本用法和一些进阶技巧，你就能更从容地在多个任务之间切换，再也不怕自己的代码乱七八糟了。
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/18' lastUpdated='2024-10-20 17:20:46' />

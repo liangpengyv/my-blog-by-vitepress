@@ -9,7 +9,9 @@ date: 2020-06-04 10:52:36
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600217490' />
 
@@ -141,3 +143,7 @@ Function.prototype.myBind = function (context) {
 }
 getName.myBind(obj, 1, 2)()  // 预期输出：ObjName 1 2
 ```
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/17' lastUpdated='2024-10-20 17:20:31' />

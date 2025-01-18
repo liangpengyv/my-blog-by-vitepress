@@ -9,7 +9,9 @@ date: 2023-06-07 19:12:36
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600239050' />
 
@@ -46,3 +48,7 @@ console.log(Math.floor(-5.67)); // 输出: -6
 **结论：**
 
 所以，num | 0 确实是一种快速、简便的方式来舍弃小数部分取整，但要注意其处理负数的行为和范围限制。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/35' lastUpdated='2024-10-20 17:38:07' />

@@ -9,7 +9,9 @@ date: 2016-08-03 13:10:48
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600205998' />
 
@@ -106,3 +108,6 @@ git pull origin master
 
 
 *注：``Git快速入门`` 系列文章大部分内容整理自“郭霖”大神的《第一行代码》内容，记录在此仅做备忘笔记及交流使用，切勿用于商业用途*
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/3' lastUpdated='2024-10-20 17:01:40' />

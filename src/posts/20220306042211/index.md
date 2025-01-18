@@ -9,7 +9,9 @@ date: 2022-03-05 20:22:11
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600231651' />
 
@@ -165,3 +167,7 @@ eventBus.emit('dataLoaded', [4, 5, 6]);
 通过本文的介绍，我们实现了一个简单且高效的事件总线，并展示了它在实际开发中的使用场景。相比于 Redux 等复杂的状态管理库，这种轻量级的事件总线能满足许多日常需求，尤其适用于中小型项目或临时状态共享的场景。
 
 如果你有更多需求，比如需要持久化事件状态、事件队列等功能，可以在此基础上进一步扩展。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/28' lastUpdated='2024-10-20 17:32:03' />

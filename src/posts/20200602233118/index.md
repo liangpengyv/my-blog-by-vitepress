@@ -9,7 +9,9 @@ date: 2020-06-02 15:31:18
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600217392' />
 
@@ -193,3 +195,7 @@ JavaScript 对象的创建方式，从最简单的字面量，到构造函数模
 -	私有属性：提高封装性
 
 未来，随着 JavaScript 的持续发展，我们可能会看到更多对象相关的新特性被引入。希望这篇博客能帮助你理清思路，选择最适合的方式来创建和管理对象。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/16' lastUpdated='2024-10-20 17:20:18' />

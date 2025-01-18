@@ -9,7 +9,9 @@ date: 2021-10-28 21:16:29
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600230269' />
 
@@ -111,3 +113,7 @@ require(['./myModule'], function (myModule) {
 -	简单静态页面：直接使用全局变量导入。
 
 如需在 ESM 和 CommonJS 间兼容，你可能需要配置工具（如 Rollup、Webpack）或添加 .cjs、.mjs 文件后缀来区分模块类型。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/24' lastUpdated='2024-10-20 17:30:50' />

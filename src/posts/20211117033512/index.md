@@ -9,7 +9,9 @@ date: 2021-11-16 19:35:12
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600230609' />
 
@@ -164,3 +166,7 @@ Vue 3 内部根据环境决定使用何种微任务，比如优先使用 queueMi
 - nextTick 是 Vue 中用于确保 DOM 更新完成后执行回调的工具。在 Vue 2 中，它是实例方法，而在 Vue 3 中，它变成了顶层导出的函数。
 
 了解了宏任务、微任务和 nextTick 后，你就能更好地掌握 Vue 的异步更新机制，写出更高效的代码！
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/25' lastUpdated='2024-10-20 17:31:11' />

@@ -9,7 +9,9 @@ date: 2019-04-08 17:58:29
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600217105' />
 
@@ -610,3 +612,5 @@ import PostHeader from '../../_components/PostHeader.vue'
 
 - Google Analytics Content Experiments
 - Visual Website Optimizer
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/13' lastUpdated='2024-10-20 17:19:31' />

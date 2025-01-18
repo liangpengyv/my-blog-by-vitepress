@@ -9,7 +9,9 @@ date: 2016-11-18 16:16:22
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600207240' />
 
@@ -122,3 +124,6 @@ y.c = 'z';
 实际改变的是f()之外的对象。
 
 别名引起的问题及其解决方法是很复杂的话题，但是你现在就应该知道它的存在，并在使用中注意这个陷阱。
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/7' lastUpdated='2024-10-20 17:04:39' />

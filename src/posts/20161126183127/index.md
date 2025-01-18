@@ -9,7 +9,9 @@ date: 2016-11-26 10:31:27
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600208412' />
 
@@ -91,3 +93,6 @@ mysql> select avg(score)
 
 会报错：`1054 - Unknown column 'student.student_no' in 'where clause'`
 这样的查询语句构成的子查询便为**相关子查询**。
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/9' lastUpdated='2024-10-20 17:07:33' />

@@ -9,7 +9,9 @@ date: 2022-04-22 00:08:13
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600232400' />
 
@@ -84,3 +86,5 @@ function prompt
 ## 最终效果
 
 ![PowerShell自定义提示符](https://github.com/user-attachments/assets/32757d37-8750-45fb-a130-3a3c882589df)
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/29' lastUpdated='2024-10-20 17:33:29' />

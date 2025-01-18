@@ -9,7 +9,9 @@ date: 2022-11-22 23:13:11
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600234282' />
 
@@ -174,3 +176,5 @@ usedFunction();
 减少关键路径渲染时间对于提升网页性能和用户体验至关重要。通过减少阻塞资源、压缩和优化资源、优先加载关键内容和减少重排与重绘，我们可以有效缩短页面的首次内容呈现时间。
 
 在实际项目中，优化 CRP 是一个持续的过程。建议借助 Chrome DevTools 等工具，实时监控性能瓶颈，并逐步优化。优化后的页面不仅能显著提升加载速度，也能提高用户的访问体验，带来更高的转化率。
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/33' lastUpdated='2024-10-20 17:34:40' />

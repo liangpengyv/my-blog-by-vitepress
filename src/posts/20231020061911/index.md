@@ -9,7 +9,9 @@ date: 2023-10-19 22:19:11
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600239146' />
 
@@ -158,3 +160,7 @@ HTTP/2 Push 是 HTTP/2 协议中的一项功能，允许服务器在客户端请
 | WebSocket | 双向通信，实时性高 | 实现复杂 | 在线游戏、协作工具 |
 | SSE | 实现简单，支持自动重连 | 单向通信 | 数据监控、实时新闻 |
 | HTTP/2 Push | 优化资源加载 | 需要 HTTP/2 支持 | 前端性能优化 |
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/36' lastUpdated='2024-10-20 17:38:18' />

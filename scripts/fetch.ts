@@ -12,6 +12,8 @@ const fetchGitHubData = async () => {
 const parsePosts = async (issuesData: Issues) => {
   const posts: Post[] = issuesData.issues.map((issue) => ({
     id: issue.id,
+    number: issue.number,
+    html_url: issue.html_url,
     title: issue.title,
     category: issue.milestone ? issue.milestone.title : undefined,
     tags: issue.labels.map((label) => (typeof label === 'string' ? label : label.name || '')),

@@ -9,7 +9,9 @@ date: 2016-09-10 11:46:17
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600206217' />
 
@@ -204,3 +206,6 @@ document.write(fib(10));
 ### 效果：
 
 ![我的头像](https://avatars.githubusercontent.com/u/23415234?s=460&u=246c673b3fe369d7146089bce615857f0aaf09a6&v=4)
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/5' lastUpdated='2024-10-20 17:02:11' />

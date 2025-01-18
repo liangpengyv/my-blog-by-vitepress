@@ -5,10 +5,8 @@ import { Post } from '../types/post'
 const generatePosts = async () => {
   const posts: Post[] = await fse.readJSON('data/posts.json')
   for (const post of posts) {
-    await fse.outputFile(
-      `src/posts/${formatDate(new Date(post.created_at))}/index.md`,
-      parsePostContent(post),
-    )
+    const filePath = `posts/${formatDate(new Date(post.created_at))}/index.md`
+    await fse.outputFile(`src/${filePath}`, parsePostContent(post))
   }
 }
 
@@ -25,24 +23,48 @@ const formatDate = (date: Date) => {
 }
 
 const parsePostContent = (post: Post) => {
-  const insertContent = `
+  const importVue = `
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
-
+`
+  const postHeader = `
 <PostHeader :postId='${post.id}' />
 `
 
+  const editInfo = `
+<EditInfo editLink='${post.html_url}' lastUpdated='${formatDisplayDate(new Date(post.updated_at))}' />
+`
+
   const frontmatterObj = frontmatter(post.content)
-  console.log(frontmatterObj)
 
   return `
 ---
 ${frontmatterObj.frontmatter}
 ---
-${insertContent}
+${importVue}
+${postHeader}
 ${frontmatterObj.body}
+${editInfo}
 `.trim()
+}
+
+const formatDisplayDate = (date: Date) => {
+  const pad = (num: number): string => num.toString().padStart(2, '0')
+  return (
+    date.getFullYear().toString() +
+    '-' +
+    pad(date.getMonth() + 1) +
+    '-' +
+    pad(date.getDate()) +
+    ' ' +
+    pad(date.getHours()) +
+    ':' +
+    pad(date.getMinutes()) +
+    ':' +
+    pad(date.getSeconds())
+  )
 }
 
 const main = async () => {

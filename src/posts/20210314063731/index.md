@@ -9,7 +9,9 @@ date: 2021-03-13 22:37:31
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600222034' />
 
@@ -117,3 +119,7 @@ git push origin -d feature/xxx
 # 再删除本地特性分支
 git branch -d feature/xxx
 ```
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/20' lastUpdated='2024-10-20 17:26:46' />

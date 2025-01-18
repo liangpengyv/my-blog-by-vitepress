@@ -9,7 +9,9 @@ date: 2022-02-20 22:28:31
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600231521' />
 
@@ -95,3 +97,7 @@ import PostHeader from '../../_components/PostHeader.vue'
 ## 七、总结
 
 微前端是一种有效解决大型前端项目复杂性和团队协作问题的架构理念。通过将应用拆分为多个独立的微应用，团队可以提高开发效率，并减少部署和升级的风险。然而，微前端也带来了更多的复杂性，需要开发者在应用设计、工具链选择和性能优化上进行合理规划。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/27' lastUpdated='2024-10-20 17:31:47' />

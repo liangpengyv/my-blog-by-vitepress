@@ -9,7 +9,9 @@ date: 2021-10-25 19:25:21
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600228610' />
 
@@ -202,3 +204,7 @@ CORS 是现代 Web 开发中的重要机制，它帮助浏览器保护用户数�
 3. 在开发环境中使用代理或临时禁用 CORS 检查，提升调试效率。
 
 希望这篇文章能帮助你彻底搞懂 CORS，并在开发过程中得心应手。如果你遇到其他跨域问题，欢迎在评论区交流！
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/22' lastUpdated='2024-10-20 17:30:11' />

@@ -9,7 +9,9 @@ date: 2020-06-01 09:44:27
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600217304' />
 
@@ -147,3 +149,7 @@ forEach 是一个简洁的遍历工具，但它的不可中断性让它在某些
 在选择工具时，请记住 MDN 的建议：“如果有中断遍历的需求，不应该使用 forEach()。” 了解并合理使用 JavaScript 的不同遍历方式，能够帮助你写出更加高效、清晰的代码。
 
 想了解更多细节，请参考 MDN 的官方文档：[Array.prototype.forEach()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/15' lastUpdated='2024-10-20 17:20:05' />

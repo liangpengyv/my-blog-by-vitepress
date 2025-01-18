@@ -9,7 +9,9 @@ date: 2020-04-23 16:24:19
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600217214' />
 
@@ -194,3 +196,7 @@ export default {
 | Apache | 生产环境 | 稳定，但配置较复杂 |
 
 根据你的项目需求和开发环境，可以选择合适的反向代理方式。如果是前端开发阶段，webpack-dev-server 或 Vite 是首选。如果是生产环境，更推荐 Nginx 或 Apache。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/14' lastUpdated='2024-10-20 17:19:46' />

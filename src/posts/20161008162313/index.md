@@ -9,7 +9,9 @@ date: 2016-10-08 08:23:13
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600207015' />
 
@@ -86,3 +88,6 @@ import PostHeader from '../../_components/PostHeader.vue'
 > **在今天，网络和智能设备已经成为我们工作、学习和生活不可分割的一部分，但适时、有计划地丢掉智能设备，断开自身与网络的连接，可以让我们生活得更好！**
 
 以上就是在这48小时实验当中，随手记下的当时时刻的小心情，仅作分享，同时非常感谢陪伴自己一同践行此次“48小时丢手机”实验的美美哒师妹，没有她的提醒，可能并不会真正实践当初只是在脑海里设想过的这个想法。
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/6' lastUpdated='2024-10-20 17:04:06' />

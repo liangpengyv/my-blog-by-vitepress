@@ -9,7 +9,9 @@ date: 2016-08-01 13:10:48
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600205337' />
 
@@ -120,3 +122,6 @@ git commit -m "First commit"
 ```
 
 注意，在 ``commit`` 命令后面，我们一定要通过 ``-m`` 参数来加上提交的描述信息，没有描述信息的提交被认为是不合法的。这样所有的代码就已经成功提交了！
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/1' lastUpdated='2024-10-20 17:00:56' />

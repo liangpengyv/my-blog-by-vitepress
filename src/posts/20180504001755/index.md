@@ -9,7 +9,9 @@ date: 2018-05-03 16:17:55
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600216759' />
 
@@ -92,3 +94,5 @@ import PostHeader from '../../_components/PostHeader.vue'
 > 版权归作者所有，任何形式转载请联系作者。
 > 作者：曾于里（来自豆瓣）
 > 来源：https://www.douban.com/note/667467299/
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/11' lastUpdated='2024-10-20 17:18:49' />

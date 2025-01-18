@@ -9,7 +9,9 @@ date: 2021-10-26 09:55:22
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600229272' />
 
@@ -86,3 +88,7 @@ import PostHeader from '../../_components/PostHeader.vue'
 
 -	正向代理是“我（客户端）无法直接访问，但通过代理我能去”。
 -	反向代理是“你找我（代理服务器）就对了，我帮你转发给正确的后端服务器”。
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/23' lastUpdated='2024-10-20 17:30:33' />

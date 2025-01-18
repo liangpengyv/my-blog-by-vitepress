@@ -9,7 +9,9 @@ date: 2019-03-11 13:34:21
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600216982' />
 
@@ -521,3 +523,7 @@ import PostHeader from '../../_components/PostHeader.vue'
 #### 11. 简单表述一下 Java 的异常机制
 
 #### 12. 线上使用的哪个版本 JDK， 为什么使用这个版本（有什么特色）
+
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/12' lastUpdated='2024-10-20 17:19:16' />

@@ -9,7 +9,9 @@ date: 2016-08-04 13:10:48
 
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
+import EditInfo from '../../_components/EditInfo.vue'
 </script>
+
 
 <PostHeader :postId='2600206104' />
 
@@ -169,3 +171,6 @@ git push origin :refs/tags/v0.1 #删除远程标签
 git help * #获取命令的帮助信息
 git status #获取当前的状态，非常有用，因为 Git 会提示接下来的能做的事情
 ```
+
+
+<EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/4' lastUpdated='2024-10-20 17:01:55' />
