@@ -6,11 +6,13 @@
     "build": "vitepress build",
     "preview": "vitepress preview",
     "fetch": "tsx scripts/fetch.ts",
-    "generate": "tsx scripts/generate.ts"
+    "generate": "tsx scripts/generate.ts",
+    "fetch:book": "dscan get book"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
     "@types/fs-extra": "^11.0.4",
+    "douban-scanner": "^0.1.3-alpha",
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.32.0",

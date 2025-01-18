@@ -1,11 +1,11 @@
-import { fetch } from 'fluxpress'
+import { fetch as fluxpressFetch } from 'fluxpress'
 import type { Issues } from 'fluxpress'
 import fse from 'fs-extra'
 import frontmatter from 'front-matter'
 import type { Post, PostsOfArchive, PostsOfCategory, PostsOfTag } from '../types/post'
 
-const fetchData = async () => {
-  const issuesData = await fetch('issues')
+const fetchGitHubData = async () => {
+  const issuesData = await fluxpressFetch('issues')
   await fse.outputJSON('data/issues.json', issuesData, { spaces: 2 })
 }
 
@@ -75,7 +75,7 @@ const parseTags = async (issuesData: Issues, posts: Post[]) => {
 }
 
 const main = async () => {
-  await fetchData()
+  await fetchGitHubData()
   await parsePosts(await fse.readJSON('data/issues.json'))
   await parseArchives(await fse.readJSON('data/posts.json'))
   await parseCategories(

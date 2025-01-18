@@ -20,6 +20,7 @@ export default defineConfig({
       { text: '归档', link: '/archives/index', activeMatch: '/archives/' },
       // { text: '分类', link: '/categories/index', activeMatch: '/categories/' },
       // { text: '标签', link: '/tags/index', activeMatch: '/tags/' },
+      { text: '读书', link: '/books/index', activeMatch: '/books/' },
       { text: '关于', link: '/about/index', activeMatch: '/about/' },
     ],
 

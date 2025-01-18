@@ -29,7 +29,8 @@ node_modules/
 cache/
 out/
 dist/
-data/
+data/*
+!data/books.json
 
 
 ### Others ###
