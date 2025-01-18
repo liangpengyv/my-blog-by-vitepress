@@ -3,9 +3,13 @@ import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
 
 export default defineConfig({
   title: '老梁有墨',
-  description: 'A VitePress Site',
-
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/avatar.png' }]],
+
+  vite: {
+    server: {
+      host: true,
+    },
+  },
 
   srcDir: 'src',
   cleanUrls: true,
