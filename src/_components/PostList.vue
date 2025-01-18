@@ -2,7 +2,9 @@
   <p v-for="post in posts" :key="post.id">
     <a class="post-item" :href="`/posts/${formatDate(new Date(post.created_at))}/`">
       <span class="post-item-text">{{ post.title }}</span>
-      <span class="post-item-text">{{ new Date(post.created_at).toLocaleDateString() }}</span>
+      <span class="post-item-text post-date">{{
+        formatDisplayDate(new Date(post.created_at))
+      }}</span>
     </a>
   </p>
 </template>
@@ -24,6 +26,11 @@ const formatDate = (date: Date) => {
     pad(date.getMinutes()) +
     pad(date.getSeconds())
   )
+}
+
+const formatDisplayDate = (date: Date) => {
+  const pad = (num: number): string => num.toString().padStart(2, '0')
+  return `${date.getFullYear().toString()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 </script>
 
@@ -66,5 +73,10 @@ const formatDate = (date: Date) => {
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: calc(100% - 128px);
+}
+
+.post-date {
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace; /* 使用等宽字体 */
 }
 </style>
