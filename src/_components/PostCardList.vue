@@ -25,12 +25,10 @@ defineProps<{
 const md = markdownIt()
 
 const getPlainText = (markdown: string) => {
-  const markdownWithoutImages = markdown.replace(/!\[.*?\]\(.*?\)/g, '')
-  const content = frontmatter(markdownWithoutImages).body
-  const html = md.render(content)
-  const tempDiv = document.createElement('div')
-  tempDiv.innerHTML = html
-  return tempDiv.textContent
+  const markdownContent = frontmatter(markdown).body
+  const markdownWithoutImages = markdownContent.replace(/!\[.*?\]\(.*?\)/g, '')
+  const html = md.render(markdownWithoutImages)
+  return html.replace(/<[^>]*>/g, '')
 }
 
 const formatLinkDate = (date: Date) => {
