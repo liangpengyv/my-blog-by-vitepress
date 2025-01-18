@@ -20,6 +20,7 @@
     "front-matter": "^4.0.2",
     "fs-extra": "^11.2.0",
     "globals": "^15.13.0",
+    "markdown-it": "^14.1.0",
     "markdown-it-task-checkbox": "^1.0.6",
     "postcss": "^8.4.49",
     "postcss-html": "^1.7.0",

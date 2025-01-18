@@ -1,7 +1,7 @@
 <template>
   <h1 style="text-align: center">首页</h1>
   <h2></h2>
-  <PostList :posts="currentPosts" />
+  <PostCardList :posts="currentPosts" />
   <div class="load-more-wrapper">
     <button class="load-more-btn" v-show="!isLoading && hasMorePosts" @click="loadMorePosts">
       加载更多
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { data as postsData } from './_data/posts.data'
-import PostList from './_components/PostList.vue'
+import PostCardList from './_components/PostCardList.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import Loading from './_components/Loading.vue'
 
