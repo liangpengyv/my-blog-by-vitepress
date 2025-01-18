@@ -12,6 +12,9 @@ export default {
     })
   },
   enhanceApp({ app, router, siteData }) {
-    // ...
+    const isWechat = /micromessenger/i.test(navigator.userAgent)
+    if (isWechat) {
+      alert('请使用外部浏览器打开本页面以获得最佳浏览体验。')
+    }
   },
 } satisfies Theme
