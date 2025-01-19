@@ -12,11 +12,6 @@ export default {
     })
   },
   enhanceApp({ app, router, siteData }) {
-    if (typeof window !== 'undefined') {
-      const isWechat = /micromessenger/i.test(navigator.userAgent)
-      if (isWechat) {
-        alert('可能无法加载某些外部资源\n\n建议使用外部浏览器打开\n\n以获得最佳浏览体验')
-      }
-    }
+    // ...
   },
 } satisfies Theme
