@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网页时钟 - 老梁有墨</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      overflow: hidden;
+    }
+
+    .container {
+      color: white;
+      width: 100%;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .date-line {
+      font-size: 4.8vw;
+      line-height: 1;
+    }
+
+    .time-line {
+      font-size: 24vw;
+      line-height: 1;
+      margin-top: 1vw;
+    }
+
+    .seconds {
+      font-size: 14vw;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="date-line">
+      <span class="full-year">1970</span>年<span class="month">01</span>月<span class="date">01</span>日,
+      星期<span class="day">一</span>
+    </div>
+    <div class="time-line">
+      <span class="hours">00</span><span class="minutes">:00</span><span class="seconds">:00</span>
+    </div>
+  </div>
+</body>
+
+<script>
+  function handleDay(day) {
+    switch (day) {
+      case 0:
+        return '日'
+      case 1:
+        return '一'
+      case 2:
+        return '二'
+      case 3:
+        return '三'
+      case 4:
+        return '四'
+      case 5:
+        return '五'
+      case 6:
+        return '六'
+    }
+  }
+
+  function formatDoubleDigit(originNumber) {
+    if (originNumber < 10) {
+      return '0' + originNumber
+    } else {
+      return originNumber
+    }
+  }
+
+  const fullYearElement = document.querySelector('.full-year')
+  const monthElement = document.querySelector('.month')
+  const dateElement = document.querySelector('.date')
+  const dayElement = document.querySelector('.day')
+  const hoursElement = document.querySelector('.hours')
+  const minutesElement = document.querySelector('.minutes')
+  const spacerElement = document.querySelector('.spacer')
+  const secondsElement = document.querySelector('.seconds')
+
+  function updateDate() {
+    const currentDate = new Date()
+    fullYearElement.innerText = currentDate.getFullYear()
+    monthElement.innerText = formatDoubleDigit(currentDate.getMonth() + 1)
+    dateElement.innerText = formatDoubleDigit(currentDate.getDate())
+    dayElement.innerText = handleDay(currentDate.getDay())
+    hoursElement.innerText = formatDoubleDigit(currentDate.getHours())
+    minutesElement.innerText = ':' + formatDoubleDigit(currentDate.getMinutes())
+    secondsElement.innerText = ':' + formatDoubleDigit(currentDate.getSeconds())
+  }
+
+  function refreshDate() {
+    updateDate()
+    setTimeout(() => {
+      refreshDate()
+    }, 1000);
+  }
+
+  refreshDate()
+</script>
+
+</html>

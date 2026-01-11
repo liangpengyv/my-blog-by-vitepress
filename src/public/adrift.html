@@ -1,0 +1,3276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一苇 - Adrift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'STKaiti', 'KaiTi', 'SimSun', serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            /* 防止移动端默认触摸行为（滚动、缩放等） */
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #titleScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 3s ease;
+        }
+
+        #titleScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 300;
+            letter-spacing: 0.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+            animation: fadeIn 2s ease-out;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 3vw, 1.8rem);
+            font-weight: 300;
+            letter-spacing: 0.3rem;
+            opacity: 0.7;
+            font-style: italic;
+            margin-bottom: 4rem;
+            animation: fadeIn 2s ease-out 0.5s both;
+        }
+
+        .instruction {
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            opacity: 0.5;
+            animation: pulse 2s ease-in-out infinite;
+            pointer-events: all;
+            cursor: pointer;
+            padding: 1rem 2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .instruction:hover {
+            opacity: 0.8;
+            border-color: rgba(255,255,255,0.6);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .audio-hint {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            opacity: 0.4;
+            letter-spacing: 0.1rem;
+            text-align: center;
+            animation: fadeInAudioHint 2s ease-out 1s both;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            line-height: 1.6;
+        }
+
+        .audio-hint::before {
+            content: '🎧';
+            font-size: 1.2em;
+            margin-bottom: 0.3rem;
+        }
+
+        @keyframes fadeInAudioHint {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 0.4;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.9; }
+        }
+
+        #chapterInfo {
+            position: absolute;
+            top: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            transition: opacity 1s ease;
+            z-index: 10;
+        }
+
+        .chapter-title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 300;
+            letter-spacing: 0.3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .chapter-subtitle {
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            opacity: 0.6;
+            font-style: italic;
+            letter-spacing: 0.2rem;
+        }
+
+        #controlHint {
+            position: absolute;
+            bottom: 5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0.7;
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            letter-spacing: 0.1rem;
+            transition: opacity 0.5s ease;
+        }
+
+        #controlHint.pressing {
+            opacity: 0;  /* 按下空格时完全透明 */
+        }
+
+        #progressBar {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            max-width: 600px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        #progressFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.6));
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .chapter-transition {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            letter-spacing: 0.5rem;
+            transition: opacity 2s ease;
+            z-index: 50;
+        }
+
+        .chapter-transition.active {
+            opacity: 1;
+        }
+
+        .transition-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            opacity: 0.6;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        #reflectionMessage {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            max-width: 80%;
+            font-style: italic;
+            letter-spacing: 0.1rem;
+            z-index: 20;
+        }
+
+        #reflectionMessage.active {
+            opacity: 0.8;
+        }
+
+        #endingScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1a1a1a 0%, #f0f0f0 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 4s ease;
+            z-index: 100;
+        }
+
+        #endingScreen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .ending-text {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            letter-spacing: 0.5rem;
+            color: #0a0a0a;
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: fadeIn 3s ease-out;
+        }
+
+        .ending-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        #journeyReview {
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem 0;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 2s both;
+        }
+
+        .review-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-top: 2px solid rgba(10, 10, 10, 0.2);
+        }
+
+        .review-stage {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #0a0a0a;
+            opacity: 0.6;
+        }
+
+        #nameInput {
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 3s both;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #nameInput input {
+            font-family: inherit;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #0a0a0a;
+            background: transparent;
+            color: #0a0a0a;
+            text-align: center;
+            letter-spacing: 0.15rem;
+            width: 500px;
+            max-width: 85%;
+        }
+
+        #nameInput input::placeholder {
+            color: rgba(10, 10, 10, 0.4);
+            letter-spacing: 0.1rem;
+        }
+
+        .share-btn {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            padding: 1rem 2.5rem;
+            margin-top: 1.5rem;
+            border: 2px solid #0a0a0a;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            cursor: pointer;
+            letter-spacing: 0.2rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            animation: fadeIn 3s ease-out 4s both;
+        }
+
+        .share-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: transparent;
+            color: rgba(10, 10, 10, 0.3);
+        }
+
+        .share-btn:not(:disabled):hover {
+            background: transparent;
+            color: #0a0a0a;
+            transform: scale(1.05);
+        }
+
+        .share-btn.loading {
+            opacity: 0.6;
+            cursor: wait;
+            pointer-events: none;
+        }
+
+        .share-btn.loading::after {
+            content: '生成中...';
+            display: inline;
+        }
+
+        .restart-btn {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            padding: 1rem 2.5rem;
+            margin-top: 1rem;
+            border: 2px solid #0a0a0a;
+            background: transparent;
+            color: #0a0a0a;
+            cursor: pointer;
+            letter-spacing: 0.2rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            animation: fadeIn 3s ease-out 5s both;
+        }
+
+        .restart-btn:hover {
+            background: #0a0a0a;
+            color: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        .share-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f0f0f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            max-width: 420px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .share-dialog.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .share-dialog p {
+            color: #0a0a0a;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .share-dialog button {
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 0.8rem 2rem;
+            border: 2px solid #0a0a0a;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            cursor: pointer;
+            letter-spacing: 0.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .share-dialog button:hover {
+            background: transparent;
+            color: #0a0a0a;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                letter-spacing: 0.3rem;
+            }
+            .subtitle {
+                letter-spacing: 0.2rem;
+            }
+            #progressBar {
+                width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="ui">
+        <div id="titleScreen">
+            <div class="title">一苇</div>
+            <div class="subtitle">Adrift</div>
+            <div class="instruction" onclick="startGame()" style="line-height: 1.6;">
+                点击开启旅程<br>
+                <span style="font-size: 0.75em; opacity: 0.75; letter-spacing: 0.08em; display: inline-block; margin-top: 0.2rem;">Click to Begin</span>
+            </div>
+            <div class="audio-hint">
+                <span>请打开声音,佩戴耳机效果更佳</span>
+                <span style="font-size: 0.85em; opacity: 0.8;">Sound on, headphones recommended</span>
+            </div>
+        </div>
+
+        <div id="chapterInfo" style="opacity: 0;">
+            <div class="chapter-title"></div>
+            <div class="chapter-subtitle"></div>
+        </div>
+
+        <div id="controlHint"></div>
+
+        <div id="progressBar">
+            <div id="progressFill"></div>
+        </div>
+
+        <div id="reflectionMessage"></div>
+
+        <div class="chapter-transition">
+            <div class="transition-title"></div>
+            <div class="transition-subtitle"></div>
+        </div>
+
+        <div id="endingScreen">
+            <div class="ending-text">
+                归宿<br>
+                <span class="ending-subtitle">The Journey Ends</span>
+            </div>
+            <div id="journeyReview">
+                <div class="review-timeline">
+                    <div class="review-stage" style="line-height: 1.5;">破晓<br><span style="font-size: 0.7em; opacity: 0.65; display: inline-block; margin-top: 0.1rem;">Dawn</span></div>
+                    <div class="review-stage" style="line-height: 1.5;">晨光<br><span style="font-size: 0.7em; opacity: 0.65; display: inline-block; margin-top: 0.1rem;">Morning</span></div>
+                    <div class="review-stage" style="line-height: 1.5;">正午<br><span style="font-size: 0.7em; opacity: 0.65; display: inline-block; margin-top: 0.1rem;">Noon</span></div>
+                    <div class="review-stage" style="line-height: 1.5;">午后<br><span style="font-size: 0.7em; opacity: 0.65; display: inline-block; margin-top: 0.1rem;">Afternoon</span></div>
+                    <div class="review-stage" style="line-height: 1.5;">星夜<br><span style="font-size: 0.7em; opacity: 0.65; display: inline-block; margin-top: 0.1rem;">Twilight</span></div>
+                </div>
+            </div>
+            <div id="nameInput">
+                <input type="text" placeholder="您的名字... / Your name..." maxlength="20" id="journeyName">
+            </div>
+            <button class="share-btn" id="shareBtn" onclick="generateShareImage()" disabled style="line-height: 1.6;">
+                生成分享卡片<br>
+                <span style="font-size: 0.75em; opacity: 0.75; display: inline-block; margin-top: 0.1rem;">Generate Card</span>
+            </button>
+            <button class="restart-btn" onclick="location.reload()" style="line-height: 1.6;">
+                重启旅程<br>
+                <span style="font-size: 0.75em; opacity: 0.75; display: inline-block; margin-top: 0.1rem;">Restart</span>
+            </button>
+        </div>
+
+        <div class="share-dialog" id="shareDialog">
+            <button class="close-dialog-btn" onclick="closeShareDialog()" style="position: absolute; top: 12px; right: 12px; background: rgba(10,10,10,0.05); color: #0a0a0a; border: 1px solid rgba(10,10,10,0.2); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 1; transition: all 0.3s ease; padding: 0; display: flex; align-items: center; justify-content: center; z-index: 10;" onmouseover="this.style.background='rgba(10,10,10,0.1)'; this.style.borderColor='rgba(10,10,10,0.4)'" onmouseout="this.style.background='rgba(10,10,10,0.05)'; this.style.borderColor='rgba(10,10,10,0.2)'">×</button>
+            <div id="shareImagePreview" style="margin-bottom: 1rem; display: none; position: relative;">
+                <img id="previewImage" style="max-width: 180px; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block; margin: 0 auto; cursor: zoom-in;" alt="分享卡片预览" onclick="openImageLightbox()">
+                <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(10,10,10,0.8); color: #f0f0f0; padding: 6px 12px; border-radius: 4px; font-size: 12px; backdrop-filter: blur(4px); pointer-events: none; white-space: nowrap; text-align: center; line-height: 1.4;">
+                    点击放大<br><span style="font-size: 0.85em; opacity: 0.7;">Click to enlarge</span>
+                </div>
+            </div>
+            <p style="line-height: 1.8;">
+                每一段旅程都值得被记录<br>
+                不妨与朋友分享这份独特的体验<br>
+                <span style="font-size: 0.85em; opacity: 0.7; margin-top: 0.5rem; display: inline-block; line-height: 1.6;">
+                    Every journey deserves to be remembered<br>
+                    Share this unique experience with friends
+                </span>
+            </p>
+            <button id="confirmBtn" onclick="handleConfirmClick()" style="line-height: 1.5;">好的 / OK</button>
+        </div>
+
+        <!-- 图片放大查看遮罩层 -->
+        <div id="imageLightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10,10,10,0.95); z-index: 300; cursor: zoom-out; pointer-events: auto;">
+            <img id="lightboxImage" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90vh; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: zoom-out;" alt="卡片大图">
+            <button id="lightboxCloseBtn" style="position: absolute; top: 20px; right: 20px; background: rgba(240,240,240,0.1); color: #f0f0f0; border: 1px solid rgba(240,240,240,0.3); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; line-height: 1; transition: all 0.3s ease; backdrop-filter: blur(4px);">×</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Canvas setup
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Audio system
+        let audioContext = null;
+        let currentAudio = null;
+        let audioSource = null;
+        let gainNode = null;
+        let isAudioFading = false;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioContext.createGain();
+                gainNode.connect(audioContext.destination);
+            }
+        }
+
+        function playSoundEffect(frequency, duration = 0.1, type = 'sine') {
+            if (!audioContext) return;
+
+            const osc = audioContext.createOscillator();
+            const oscGain = audioContext.createGain();
+
+            osc.connect(oscGain);
+            oscGain.connect(audioContext.destination);
+
+            osc.frequency.value = frequency;
+            osc.type = type;
+
+            oscGain.gain.setValueAtTime(0.1, audioContext.currentTime);
+            oscGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + duration);
+        }
+
+        function fadeAudio(targetVolume, duration = 1.5) {
+            if (!gainNode || isAudioFading) return;
+
+            isAudioFading = true;
+            const currentVolume = gainNode.gain.value;
+            const startTime = audioContext.currentTime;
+
+            gainNode.gain.cancelScheduledValues(startTime);
+            gainNode.gain.setValueAtTime(currentVolume, startTime);
+            gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + duration);
+
+            setTimeout(() => {
+                isAudioFading = false;
+                if (targetVolume === 0 && currentAudio) {
+                    currentAudio.pause();
+                }
+            }, duration * 1000);
+        }
+
+        function playChapterMusic(audioUrl, shouldLoop = true, startTime = 0) {
+            initAudioContext();
+
+            if (currentAudio && !currentAudio.paused) {
+                fadeAudio(0, 2);
+                setTimeout(() => {
+                    loadAndPlayMusic(audioUrl, shouldLoop, startTime);
+                }, 2000);
+            } else {
+                loadAndPlayMusic(audioUrl, shouldLoop, startTime);
+            }
+        }
+
+        function loadAndPlayMusic(audioUrl, shouldLoop, startTime = 0) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.src = '';
+            }
+
+            currentAudio = new Audio(audioUrl);
+            currentAudio.crossOrigin = 'anonymous';
+            currentAudio.loop = shouldLoop;
+
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            if (!audioSource) {
+                audioSource = audioContext.createMediaElementSource(currentAudio);
+                audioSource.connect(gainNode);
+            }
+
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+            // Set start time if specified
+            if (startTime > 0) {
+                currentAudio.addEventListener('loadedmetadata', () => {
+                    currentAudio.currentTime = startTime;
+                }, { once: true });
+            }
+
+            currentAudio.play().then(() => {
+                fadeAudio(0.5, 2);
+            }).catch(e => console.log('Audio play failed:', e));
+        }
+
+        function pauseMusic() {
+            // Don't pause music if game has ended
+            if (gameState.ended) return;
+
+            if (currentAudio && !currentAudio.paused) {
+                // Cancel any ongoing fade operations
+                if (gainNode) {
+                    gainNode.gain.cancelScheduledValues(audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+                }
+
+                // Pause the audio after fade
+                setTimeout(() => {
+                    if (currentAudio && !gameState.isPressing) {
+                        currentAudio.pause();
+                    }
+                }, 300);
+            }
+        }
+
+        function resumeMusic() {
+            // Don't resume music if game has ended
+            if (gameState.ended) return;
+
+            if (currentAudio) {
+                // Ensure AudioContext is running
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+
+                // Cancel any ongoing fade operations
+                if (gainNode) {
+                    gainNode.gain.cancelScheduledValues(audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
+                }
+
+                if (currentAudio.paused) {
+                    currentAudio.play().then(() => {
+                        if (gainNode) {
+                            gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.5);
+                        }
+                    }).catch(e => console.log('Audio resume failed:', e));
+                } else {
+                    // Already playing, just fade to normal volume
+                    if (gainNode) {
+                        gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.5);
+                    }
+                }
+            }
+        }
+
+        function silenceAllAudio(duration = 3) {
+            if (currentAudio && !currentAudio.paused) {
+                fadeAudio(0, duration);
+            }
+        }
+
+        // Game state
+        const gameState = {
+            started: false,
+            ended: false,
+            currentChapter: 0,
+            distance: 0,
+            totalDistance: 58000,
+            isPressing: false,
+            pressIntensity: 0,
+            movementPhase: 'initial', // 'initial' | 'centering' | 'scrolling'
+            backgroundOffset: 0,
+            lastTimestamp: 0,
+            deltaTime: 0,
+            boat: {
+                x: 150,
+                y: canvas.height / 2,
+                targetX: 150,
+                speed: 0,
+                maxSpeed: 5,
+                acceleration: 0.08,
+                deceleration: 0.04,
+                bobOffset: 0,
+                bobSpeed: 0.05,
+                bobAmplitude: 3,
+                tilt: 0,
+                shadowScale: 1.2,
+                shadowOpacity: 0.3
+            },
+            time: 0,
+            breathPhase: 0,
+            particles: [],
+            waves: [],
+            birds: [],
+            stars: [],
+            clouds: [],
+            raindrops: [],
+            companionBoats: [],
+            driftingItems: [],
+            lighthouse: null,
+            // 伴侣船状态
+            companion: null,  // {x, y, opacity, phase: 'approaching' | 'following' | 'leaving' | 'gone'}
+            // 小孩船状态
+            child: null  // {x, y, opacity, scale, phase: 'appearing' | 'following' | 'leaving' | 'gone', speed, bobSpeed, bobAmplitude}
+        };
+
+        // Reflection messages for drifting items
+        const reflections = {
+            'paper-plane': {
+                zh: '"那时候,总以为海的那边是金色的"',
+                en: '"Back then, I believed the other side of the sea was golden"'
+            },
+            'book': {
+                zh: '"知识是灯塔,但智慧是航向"',
+                en: '"Knowledge is the lighthouse, but wisdom is the course"'
+            },
+            'briefcase': {
+                zh: '"负重前行,也要记得抬头看星"',
+                en: '"Carry the weight, but remember to look up at the stars"'
+            },
+            'clock': {
+                zh: '"时间从不停歇,但我们可以选择节奏"',
+                en: '"Time never stops, but we can choose our rhythm"'
+            },
+            'feather': {
+                zh: '"放下,也是一种前进"',
+                en: '"Letting go is also a way forward"'
+            }
+        };
+
+        // Chapter-specific ambient reflections
+        const chapterReflections = {
+            0: [ // 序章·破晓
+                {
+                    zh: '"每一次启程,都是一次重生"',
+                    en: '"Every departure is a rebirth"'
+                },
+                {
+                    zh: '"黎明前的海,静得像一个秘密"',
+                    en: '"The sea before dawn, quiet as a secret"'
+                },
+                {
+                    zh: '"起点没有重量,只有可能"',
+                    en: '"The starting point has no weight, only possibility"'
+                },
+                {
+                    zh: '"第一道光,照亮的不是海,是心"',
+                    en: '"The first light illuminates not the sea, but the heart"'
+                }
+            ],
+            1: [ // 初章·晨光
+                {
+                    zh: '"那时候,总以为海的那边是金色的"',
+                    en: '"Back then, I believed the other side of the sea was golden"'
+                },
+                {
+                    zh: '"童年的风,吹过来的都是梦"',
+                    en: '"The wind of childhood carries only dreams"'
+                },
+                {
+                    zh: '"每一朵浪花,都像是一次欢笑"',
+                    en: '"Every wave feels like laughter"'
+                },
+                {
+                    zh: '"无畏,是因为还不知道害怕"',
+                    en: '"Fearless, because fear is yet unknown"'
+                },
+                {
+                    zh: '"那些纸飞机,飞向的是明天"',
+                    en: '"Those paper planes fly toward tomorrow"'
+                }
+            ],
+            2: [ // 征途·正午
+                {
+                    zh: '"正午的太阳,晒不干征途的汗水"',
+                    en: '"The midday sun cannot dry the sweat of the journey"'
+                },
+                {
+                    zh: '"每一个波浪,都是一次考验"',
+                    en: '"Every wave is a test"'
+                },
+                {
+                    zh: '"奋斗的意义,在远方等着你"',
+                    en: '"The meaning of struggle awaits you in the distance"'
+                },
+                {
+                    zh: '"疲惫时,别忘了为什么出发"',
+                    en: '"When weary, remember why you set sail"'
+                },
+                {
+                    zh: '"风浪越大,成长越快"',
+                    en: '"The greater the storm, the faster the growth"'
+                }
+            ],
+            3: [ // 沉思·午后
+                {
+                    zh: '"午后日光不断向下，但也是最炙热的时候"',
+                    en: '"Afternoon light descends, yet burns the brightest"'
+                },
+                {
+                    zh: '"中年的海,波澜不惊,却深不见底"',
+                    en: '"The sea of middle age appears calm, yet its depths are unfathomable"'
+                },
+                {
+                    zh: '"回头看,才发现路已经走了这么远"',
+                    en: '"Looking back, only then do we see how far we\'ve come"'
+                },
+                {
+                    zh: '"放下一些,才能继续前行"',
+                    en: '"Let go of some things to move forward"'
+                },
+                {
+                    zh: '"沉思不是停滞,而是为了看清方向"',
+                    en: '"Reflection is not stagnation, but clarity of direction"'
+                }
+            ],
+            4: [ // 宁静·星夜
+                {
+                    zh: '"星夜下,一切都归于平静"',
+                    en: '"Under the starry night, all returns to stillness"'
+                },
+                {
+                    zh: '"终点不是结束,是另一种开始"',
+                    en: '"The end is not the finish, but another beginning"'
+                },
+                {
+                    zh: '"走过的路,都化作了星光"',
+                    en: '"The path traveled becomes starlight"'
+                },
+                {
+                    zh: '"归航时,心中早已是彼岸"',
+                    en: '"When returning, the heart has already reached the shore"'
+                },
+                {
+                    zh: '"宁静,是岁月赠予的礼物"',
+                    en: '"Tranquility is the gift of time"'
+                }
+            ]
+        };
+
+        // Chapter definitions
+        const chapters = [
+            {
+                name: "序章 · Prologue",
+                subtitle: "破晓 · Dawn",
+                musicUrl: "https://image.cdn2.seaart.me/2025-12-30/d59kqlde878c73fjkekg/f2970abb3df022f88493ed0f3674d435.mp3",
+                speedMultiplier: 0.4,
+                waveIntensity: 0.2,
+                waveFrequency: 0.015,
+                particleCount: 3,
+                shadowScale: 1.0,
+                shadowOpacity: 0.2,
+                resistanceMultiplier: 1.0,
+                inertiaMultiplier: 1.0,
+                hasRain: false,
+                hasFog: false,
+                fogIntensity: 0,
+                bgColors: {
+                    sky: ['#0a0a0a', '#1a1a1a'],
+                    sea: ['#1a1a1a', '#0a0a0a']
+                },
+                driftingItem: null,
+                distanceRange: [0, 5000]
+            },
+            {
+                name: "初章 · Childhood",
+                subtitle: "晨光 · Morning",
+                musicUrl: "https://image.cdn2.seaart.me/2025-12-30/d59kr25e878c738gd5o0/af73345e8f431501a85a839eabd6618c.mp3",
+                musicStartTime: 5, // 从第5秒开始播放,跳过静音部分
+                speedMultiplier: 1.2,
+                waveIntensity: 0.5,
+                waveFrequency: 0.022,
+                particleCount: 12,
+                shadowScale: 1.5,
+                shadowOpacity: 0.4,
+                resistanceMultiplier: 0.8,
+                inertiaMultiplier: 0.9,
+                hasRain: false,
+                hasFog: false,
+                fogIntensity: 0,
+                bgColors: {
+                    sky: ['#1a1a1a', '#2a2a2a'],
+                    sea: ['#2a2a2a', '#1a1a1a']
+                },
+                driftingItem: 'paper-plane',
+                distanceRange: [5000, 21000]
+            },
+            {
+                name: "征途 · Journey",
+                subtitle: "正午 · Noon",
+                musicUrl: "https://image.cdn2.seaart.me/2025-12-30/d59krj5e878c73fjkphg/57b9f0ad40f2ae64244952c8040d4413.mp3",
+                speedMultiplier: 1.8,
+                waveIntensity: 0.8,
+                waveFrequency: 0.028,
+                particleCount: 20,
+                shadowScale: 1.3,
+                shadowOpacity: 0.5,
+                resistanceMultiplier: 1.2,
+                inertiaMultiplier: 0.7,
+                hasRain: true,
+                hasFog: false,
+                fogIntensity: 0,
+                bgColors: {
+                    sky: ['#2a2a2a', '#3a3a3a'],
+                    sea: ['#3a3a3a', '#2a2a2a']
+                },
+                driftingItem: 'book',
+                distanceRange: [21000, 37000]
+            },
+            {
+                name: "沉思 · Reflection",
+                subtitle: "午后 · Afternoon",
+                musicUrl: "https://image.cdn2.seaart.me/2025-12-30/d59ks2de878c73fjktm0/044217ce05fc6d49275a7f439f4756b4.mp3",
+                speedMultiplier: 0.7,
+                waveIntensity: 0.7,
+                waveFrequency: 0.018,
+                particleCount: 8,
+                shadowScale: 0.8,
+                shadowOpacity: 0.6,
+                resistanceMultiplier: 1.8,
+                inertiaMultiplier: 0.6,
+                hasRain: false,
+                hasFog: true,
+                fogIntensity: 0.4,
+                bgColors: {
+                    sky: ['#3a3a3a', '#2a2a2a'],
+                    sea: ['#2a2a2a', '#3a3a3a']
+                },
+                driftingItem: 'briefcase',
+                distanceRange: [37000, 51000],
+                // 中年负重感机制: 需要更用力按住才能前行
+                pressureThreshold: 0.6,  // 需要pressIntensity达到0.6才开始有效加速
+                heavyResistance: true     // 标记为高阻力章节
+            },
+            {
+                name: "宁静 · Tranquility",
+                subtitle: "星夜 · Twilight",
+                musicUrl: "https://image.cdn2.seaart.me/2025-12-30/d59ksjte878c73fjl010/d890cd1668d97acf848e4570182a5c25.mp3",
+                speedMultiplier: 0.45,
+                waveIntensity: 0.25,
+                waveFrequency: 0.018,
+                particleCount: 5,
+                shadowScale: 0.5,
+                shadowOpacity: 0.3,
+                resistanceMultiplier: 0.5,
+                inertiaMultiplier: 4.5,  // 增大惯性,实现长距离滑行
+                hasRain: false,
+                hasFog: true,
+                fogIntensity: 0.3,
+                bgColors: {
+                    sky: ['#2a2a2a', '#3a3a3a'],
+                    sea: ['#3a3a3a', '#4a4a4a']
+                },
+                driftingItem: 'feather',
+                distanceRange: [51000, 58000],
+                // 老年顺应天命机制: 松开后长距离惯性滑行
+                longInertia: true  // 标记为长惯性章节
+            }
+        ];
+
+        // Initialize environment elements
+        // 海浪初始化:密集分布铺满整个屏幕,确保从左到右完全覆盖
+        // 策略:让海浪起点随机分布在0到canvas.width范围内,数量足够多以确保覆盖
+        for (let i = 0; i < 30; i++) {
+            gameState.waves.push({
+                x: (i / 30) * canvas.width + Math.random() * 40 - 20,  // 均匀分布+小随机偏移
+                y: canvas.height / 2 + Math.random() * 250 - 125,
+                length: 60 + Math.random() * 120,
+                speed: 0.4 + Math.random() * 1.2,
+                amplitude: 4 + Math.random() * 12,
+                frequency: 0.015 + Math.random() * 0.025,
+                opacity: 0.08 + Math.random() * 0.15,
+                offset: Math.random() * Math.PI * 2
+            });
+        }
+
+        // 额外添加一些海浪,确保屏幕左侧也有覆盖
+        for (let i = 0; i < 10; i++) {
+            gameState.waves.push({
+                x: -200 + Math.random() * 200,  // 屏幕左侧外到左边缘
+                y: canvas.height / 2 + Math.random() * 250 - 125,
+                length: 60 + Math.random() * 120,
+                speed: 0.4 + Math.random() * 1.2,
+                amplitude: 4 + Math.random() * 12,
+                frequency: 0.015 + Math.random() * 0.025,
+                opacity: 0.08 + Math.random() * 0.15,
+                offset: Math.random() * Math.PI * 2
+            });
+        }
+
+        for (let i = 0; i < 5; i++) {
+            gameState.birds.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height * 0.15 + Math.random() * 150,
+                speed: 0.3 + Math.random() * 0.5,
+                wingPhase: Math.random() * Math.PI * 2,
+                scale: 0.6 + Math.random() * 0.5
+            });
+        }
+
+        for (let i = 0; i < 40; i++) {
+            gameState.stars.push({
+                x: Math.random() * canvas.width * 2,
+                y: Math.random() * canvas.height * 0.4,
+                size: 0.5 + Math.random() * 1.5,
+                twinklePhase: Math.random() * Math.PI * 2,
+                twinkleSpeed: 0.02 + Math.random() * 0.03,
+                opacity: 0.3 + Math.random() * 0.4
+            });
+        }
+
+        for (let i = 0; i < 6; i++) {
+            gameState.clouds.push({
+                x: Math.random() * canvas.width * 1.5,
+                y: canvas.height * 0.15 + Math.random() * 100,
+                width: 80 + Math.random() * 100,
+                height: 30 + Math.random() * 40,
+                speed: 0.1 + Math.random() * 0.2,
+                opacity: 0.05 + Math.random() * 0.1
+            });
+        }
+
+        // Particle system
+        class Particle {
+            constructor(x, y, intensity = 1) {
+                this.x = x;
+                this.y = y;
+                this.life = 1;
+                this.decay = 0.008 + Math.random() * 0.015;
+                this.size = 1 + Math.random() * 2.5 * intensity;
+                this.vx = (-1.5 - Math.random() * 2) * intensity;
+                this.vy = (Math.random() - 0.5) * 3 * intensity;
+                this.opacity = 0.2 + Math.random() * 0.3;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05;
+                this.life -= this.decay;
+                return this.life > 0;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life * this.opacity;
+                ctx.fillStyle = '#f0f0f0';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Raindrop system
+        class Raindrop {
+            constructor(intensity = 1) {
+                this.x = Math.random() * (canvas.width + 200) - 100;
+                this.y = -10 - Math.random() * 100;
+                this.length = (10 + Math.random() * 20) * intensity;
+                this.speed = (8 + Math.random() * 4) * intensity;
+                this.opacity = 0.2 + Math.random() * 0.3;
+                this.thickness = 0.8 + Math.random() * 0.4;
+                this.windSway = Math.random() * 0.2 - 0.1;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x -= this.speed * (0.3 + this.windSway);
+
+                // 创建雨滴溅落效果
+                if (this.y > canvas.height / 2 && Math.random() < 0.05) {
+                    for (let i = 0; i < 3; i++) {
+                        gameState.particles.push(new Particle(
+                            this.x,
+                            canvas.height / 2 + Math.random() * 100,
+                            0.3
+                        ));
+                    }
+                }
+
+                return this.y < canvas.height + 20;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.lineWidth = this.thickness;
+                ctx.lineCap = 'round';
+
+                // 主雨滴
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - this.length * 0.3, this.y + this.length);
+                ctx.stroke();
+
+                // 雨滴尾迹效果
+                ctx.globalAlpha = this.opacity * 0.3;
+                ctx.lineWidth = this.thickness * 0.5;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - this.length * 0.2);
+                ctx.lineTo(this.x - this.length * 0.2, this.y + this.length * 0.8);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // Drifting item system
+        class DriftingItem {
+            constructor(type, x) {
+                this.type = type;
+                this.x = x;
+                this.y = canvas.height / 2 + 30 + Math.random() * 50;
+                this.bobPhase = Math.random() * Math.PI * 2;
+                this.collected = false;
+            }
+
+            update() {
+                this.x -= 0.5;
+                this.bobPhase += 0.02;
+                return this.x > -50 && !this.collected;
+            }
+
+            checkCollision(boat) {
+                const dx = this.x - boat.x;
+                const dy = this.y - boat.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 40 && !this.collected) {
+                    this.collected = true;
+                    showReflection(this.type);
+                    playSoundEffect(440, 0.3, 'sine');
+                }
+            }
+
+            draw(ctx) {
+                if (this.collected) return;
+
+                const bobOffset = Math.sin(this.bobPhase) * 3;
+                ctx.save();
+                ctx.translate(this.x, this.y + bobOffset);
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.lineWidth = 2;
+
+                switch(this.type) {
+                    case 'paper-plane':
+                        ctx.beginPath();
+                        ctx.moveTo(-10, 0);
+                        ctx.lineTo(10, 0);
+                        ctx.lineTo(0, -8);
+                        ctx.closePath();
+                        ctx.stroke();
+                        break;
+                    case 'book':
+                        ctx.strokeRect(-8, -6, 16, 12);
+                        ctx.beginPath();
+                        ctx.moveTo(-8, -6);
+                        ctx.lineTo(-8, 6);
+                        ctx.stroke();
+                        break;
+                    case 'briefcase':
+                        ctx.strokeRect(-10, -6, 20, 12);
+                        ctx.beginPath();
+                        ctx.moveTo(-10, -2);
+                        ctx.lineTo(10, -2);
+                        ctx.stroke();
+                        break;
+                    case 'feather':
+                        ctx.beginPath();
+                        ctx.moveTo(0, -10);
+                        ctx.quadraticCurveTo(5, -5, 0, 10);
+                        ctx.moveTo(0, -10);
+                        ctx.quadraticCurveTo(-5, -5, 0, 10);
+                        ctx.stroke();
+                        break;
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // Companion boat system
+        class CompanionBoat {
+            constructor() {
+                this.x = canvas.width + 100;
+                this.y = canvas.height / 2 - 100 + Math.random() * 200;
+                this.speed = 0.3 + Math.random() * 0.4;
+                this.bobPhase = Math.random() * Math.PI * 2;
+                this.scale = 0.6 + Math.random() * 0.3;
+            }
+
+            update() {
+                this.x -= this.speed;
+                this.bobPhase += 0.03;
+                return this.x > -100;
+            }
+
+            draw(ctx) {
+                const bobOffset = Math.sin(this.bobPhase) * 2;
+                ctx.save();
+                ctx.translate(this.x, this.y + bobOffset);
+                ctx.scale(this.scale, this.scale);
+                ctx.globalAlpha = 0.3;
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.lineWidth = 1.5;
+
+                ctx.beginPath();
+                ctx.moveTo(-20, 0);
+                ctx.lineTo(20, 0);
+                ctx.lineTo(15, 10);
+                ctx.lineTo(-15, 10);
+                ctx.closePath();
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -30);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // Input handling
+        let keyPressed = false;
+        let touchPressed = false;  // 跟踪触屏状态
+        const controlHint = document.getElementById('controlHint');
+        
+        // 检测是否为移动设备
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                         ('ontouchstart' in window) || 
+                         (navigator.maxTouchPoints > 0);
+        
+        // 根据设备类型显示不同的控制提示
+        controlHint.innerHTML = isMobile
+            ? '<div style="line-height: 1.8;">长按屏幕前行 · 松开随波逐流<br><span style="font-size: 0.85em; opacity: 0.7; display: inline-block; margin-top: 0.2rem;">Hold to move · Release to drift</span></div>'
+            : '<div style="line-height: 1.8;">长按空格键前行 · 松开随波逐流<br><span style="font-size: 0.85em; opacity: 0.7; display: inline-block; margin-top: 0.2rem;">Hold Space to move · Release to drift</span></div>';
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.key === ' ') {
+                e.preventDefault();
+
+                // 游戏未开始或已结束,不响应空格键
+                if (!gameState.started || gameState.ended) {
+                    return;
+                }
+
+                // 游戏进行中,空格键控制移动
+                if (!keyPressed) {
+                    keyPressed = true;
+                    gameState.isPressing = true;
+                    controlHint.classList.add('pressing');
+                    resumeMusic();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space' || e.key === ' ') {
+                e.preventDefault();
+
+                // 游戏已结束,不响应空格键
+                if (gameState.ended) {
+                    return;
+                }
+
+                keyPressed = false;
+                gameState.isPressing = false;
+                controlHint.classList.remove('pressing');
+                pauseMusic();
+            }
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            if (gameState.started && !gameState.ended) {
+                touchPressed = true;
+                gameState.isPressing = true;
+                controlHint.classList.add('pressing');
+                resumeMusic();
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (gameState.started && !gameState.ended) {
+                touchPressed = false;
+                gameState.isPressing = false;
+                controlHint.classList.remove('pressing');
+                pauseMusic();
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 处理触摸移动 - 阻止页面滚动，保持按压状态
+        document.addEventListener('touchmove', (e) => {
+            if (gameState.started && !gameState.ended) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 处理触摸取消 - 当系统打断触摸时重置状态
+        document.addEventListener('touchcancel', (e) => {
+            if (gameState.started && !gameState.ended) {
+                touchPressed = false;
+                gameState.isPressing = false;
+                controlHint.classList.remove('pressing');
+                pauseMusic();
+            }
+        });
+
+        // 阻止长按弹出系统菜单
+        document.addEventListener('contextmenu', (e) => {
+            if (gameState.started && !gameState.ended) {
+                e.preventDefault();
+            }
+        });
+
+        // 添加页面失去焦点时的安全处理,防止isPressing卡住
+        window.addEventListener('blur', () => {
+            if (!gameState.ended && gameState.started) {
+                keyPressed = false;
+                touchPressed = false;
+                gameState.isPressing = false;
+                controlHint.classList.remove('pressing');
+                pauseMusic();
+                // 重置时间戳,防止重新激活时deltaTime异常
+                gameState.lastTimestamp = 0;
+            }
+        });
+
+        // 添加visibilitychange事件,页面隐藏时重置状态
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && !gameState.ended && gameState.started) {
+                keyPressed = false;
+                touchPressed = false;
+                gameState.isPressing = false;
+                controlHint.classList.remove('pressing');
+                pauseMusic();
+                // 重置时间戳,防止重新激活时deltaTime异常
+                gameState.lastTimestamp = 0;
+            }
+        });
+
+        // Show reflection message
+        function showReflection(itemType) {
+            const message = reflections[itemType];
+            if (!message) return;
+
+            const msgEl = document.getElementById('reflectionMessage');
+            msgEl.innerHTML = `
+                <div style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 0.4rem;">${message.zh}</div>
+                <div style="font-size: 0.9rem; opacity: 0.7; font-style: italic; line-height: 1.5;">${message.en}</div>
+            `;
+            msgEl.classList.add('active');
+
+            setTimeout(() => {
+                msgEl.classList.remove('active');
+            }, 4000);
+        }
+
+        // Show random chapter reflection
+        function showChapterReflection(chapterIndex) {
+            const messages = chapterReflections[chapterIndex];
+            if (!messages || messages.length === 0) return;
+
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            const msgEl = document.getElementById('reflectionMessage');
+            msgEl.innerHTML = `
+                <div style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 0.4rem;">${randomMessage.zh}</div>
+                <div style="font-size: 0.9rem; opacity: 0.7; font-style: italic; line-height: 1.5;">${randomMessage.en}</div>
+            `;
+            msgEl.classList.add('active');
+
+            setTimeout(() => {
+                msgEl.classList.remove('active');
+            }, 5000);
+        }
+
+        // Start game
+        function startGame() {
+            if (gameState.started) return; // Prevent double start
+
+            initAudioContext();
+
+            // 进入全屏模式以获得沉浸式体验
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('无法进入全屏模式:', err);
+                });
+            }
+
+            document.getElementById('titleScreen').classList.add('hidden');
+            setTimeout(() => {
+                gameState.started = true;
+                gameState.movementPhase = 'centering'; // Start with boat moving to center
+
+                // Initialize first chapter's boat parameters
+                const firstChapter = chapters[0];
+                gameState.boat.maxSpeed = 4 * firstChapter.speedMultiplier;
+                gameState.boat.bobSpeed = 0.025 + firstChapter.waveIntensity * 0.04;
+                gameState.boat.bobAmplitude = 2 + firstChapter.waveIntensity * 6;
+                gameState.boat.shadowScale = firstChapter.shadowScale;
+                gameState.boat.shadowOpacity = firstChapter.shadowOpacity;
+
+                updateChapter();
+
+                // Load music but keep it paused until player presses space
+                if (chapters[0].musicUrl) {
+                    if (currentAudio) {
+                        currentAudio.pause();
+                        currentAudio.src = '';
+                    }
+
+                    currentAudio = new Audio(chapters[0].musicUrl);
+                    currentAudio.crossOrigin = 'anonymous';
+                    currentAudio.loop = true;
+
+                    if (!audioSource && audioContext.state !== 'suspended') {
+                        audioSource = audioContext.createMediaElementSource(currentAudio);
+                        audioSource.connect(gainNode);
+                    }
+
+                    // Set volume to 0 and keep paused
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+                    // Preload the audio but don't play
+                    currentAudio.load();
+                }
+
+                gameLoop();
+            }, 3000);
+        }
+
+        // Update chapter
+        function updateChapter() {
+            for (let i = 0; i < chapters.length; i++) {
+                if (gameState.distance >= chapters[i].distanceRange[0] &&
+                    gameState.distance < chapters[i].distanceRange[1]) {
+                    if (gameState.currentChapter !== i) {
+                        const oldChapter = gameState.currentChapter;
+                        gameState.currentChapter = i;
+                        showChapterTransition(i);
+
+                        // Show random chapter reflection after transition
+                        setTimeout(() => {
+                            showChapterReflection(i);
+                        }, 3500);
+
+                        // 留白的力量: 5秒完全静音,让玩家在人生阶段转换中自省
+                        silenceAllAudio(3);
+                        setTimeout(() => {
+                            if (chapters[i].musicUrl) {
+                                const startTime = chapters[i].musicStartTime || 0;
+                                playChapterMusic(chapters[i].musicUrl, true, startTime);
+                            }
+                        }, 5000);
+
+                        // Update boat rhythm AFTER transition (3 seconds)
+                        setTimeout(() => {
+                            const newChapter = chapters[i];
+                            gameState.boat.maxSpeed = 4 * newChapter.speedMultiplier;
+                            // 确保当前速度不超过新章节的maxSpeed
+                            gameState.boat.speed = Math.min(gameState.boat.speed, gameState.boat.maxSpeed);
+                            gameState.boat.bobSpeed = 0.025 + newChapter.waveIntensity * 0.04;
+                            gameState.boat.bobAmplitude = 2 + newChapter.waveIntensity * 6;
+                            gameState.boat.shadowScale = newChapter.shadowScale;
+                            gameState.boat.shadowOpacity = newChapter.shadowOpacity;
+                        }, 3000);
+
+                        // Spawn drifting item
+                        if (chapters[i].driftingItem) {
+                            const spawnX = canvas.width + 200 + Math.random() * 300;
+                            gameState.driftingItems.push(new DriftingItem(chapters[i].driftingItem, spawnX));
+                        }
+
+                        // Spawn lighthouse near chapter end
+                        const chapterProgress = (gameState.distance - chapters[i].distanceRange[0]) /
+                                              (chapters[i].distanceRange[1] - chapters[i].distanceRange[0]);
+                        if (chapterProgress > 0.7 && !gameState.lighthouse) {
+                            gameState.lighthouse = {
+                                x: canvas.width - 100,
+                                y: canvas.height / 2 - 100,
+                                pulsePhase: 0
+                            };
+                        }
+                    }
+                    break;
+                }
+            }
+
+            const chapter = chapters[gameState.currentChapter];
+            document.querySelector('.chapter-title').textContent = chapter.name;
+            document.querySelector('.chapter-subtitle').textContent = chapter.subtitle;
+            document.getElementById('chapterInfo').style.opacity = '1';
+        }
+
+        function showChapterTransition(index) {
+            const transition = document.querySelector('.chapter-transition');
+            const chapter = chapters[index];
+            transition.querySelector('.transition-title').textContent = chapter.name;
+            transition.querySelector('.transition-subtitle').textContent = chapter.subtitle;
+            transition.classList.add('active');
+
+            setTimeout(() => {
+                transition.classList.remove('active');
+            }, 3000);
+        }
+
+        // 伴侣船更新函数
+        function updateCompanion(timeScale) {
+            const companion = gameState.companion;
+            if (!companion) return;
+
+            const chapter = chapters[gameState.currentChapter];
+
+            // 根据小孩船的存在状态调整位置
+            // 小孩船存在时,伴侣船向后退到70像素位置
+            // 小孩船不存在时,伴侣船在40像素位置
+            const child = gameState.child;
+            const isChildPresent = child && child.phase !== 'gone' && child.opacity > 0.1;
+            const targetFollowX = isChildPresent ?
+                gameState.boat.x - 70 :  // 小孩船在时,后退给出空间
+                gameState.boat.x - 40;   // 正常位置,更靠近主船
+            const targetFollowY = gameState.boat.y + 15;  // 轻微偏下,产生视觉重叠
+
+            // 同步主船的律动参数 (bobSpeed和bobAmplitude)
+            companion.bobSpeed = gameState.boat.bobSpeed;
+            companion.bobAmplitude = gameState.boat.bobAmplitude;
+
+            // 伴侣船自己的速度,跟随主船
+            if (companion.phase === 'approaching' || companion.phase === 'following') {
+                companion.speed = gameState.boat.speed;
+            } else if (companion.phase === 'leaving') {
+                companion.speed = 0;  // 离别时停止
+            }
+
+            // 不同阶段的行为
+            switch (companion.phase) {
+                case 'approaching':
+                    // 从远处接近
+                    companion.x -= (3 + gameState.boat.speed * 0.3) * timeScale;
+
+                    // 逐渐移动到跟随位置
+                    const dx = targetFollowX - companion.x;
+                    const dy = targetFollowY - companion.y;
+                    companion.x += dx * 0.02 * timeScale;
+                    companion.y += dy * 0.02 * timeScale;
+
+                    // 淡入
+                    companion.opacity = Math.min(companion.opacity + 0.01 * timeScale, 1);
+
+                    // 当接近目标位置时,切换到跟随状态
+                    if (Math.abs(dx) < 50 && Math.abs(dy) < 30) {
+                        companion.phase = 'following';
+                    }
+                    break;
+
+                case 'following':
+                    // 跟随主船,保持相对位置
+                    const followDx = targetFollowX - companion.x;
+                    const followDy = targetFollowY - companion.y;
+
+                    // 平滑跟随
+                    companion.x += followDx * 0.08 * timeScale;
+                    companion.y += followDy * 0.08 * timeScale;
+
+                    // 保持完全可见
+                    companion.opacity = 1;
+                    break;
+
+                case 'leaving':
+                    // 伴侣船渐进加速离开,从静止开始逐渐加速
+                    // 初始化离开速度(如果未设置)
+                    if (companion.leavingSpeed === undefined) {
+                        companion.leavingSpeed = 0;
+                        companion.leavingAcceleration = 0.0001;
+                    }
+
+                    // 渐进加速,直到达到目标速度(原速度的60%)
+                    const targetLeavingSpeed = gameState.boat.speed * 0.6;
+                    if (companion.leavingSpeed < targetLeavingSpeed) {
+                        companion.leavingSpeed = Math.min(
+                            companion.leavingSpeed + companion.leavingAcceleration * timeScale * 60,
+                            targetLeavingSpeed
+                        );
+                    }
+
+                    // 向左移动,模拟"停留在原地,被主船拉开距离"的效果
+                    companion.x -= companion.leavingSpeed * timeScale;
+
+                    // 更缓慢地淡出,让离别更加悠长而深刻
+                    companion.opacity = Math.max(companion.opacity - 0.0015 * timeScale, 0);  // 从0.0025降低到0.0015
+
+                    // 完全消失后标记为gone
+                    if (companion.opacity <= 0) {
+                        companion.phase = 'gone';
+                    }
+                    break;
+
+                case 'gone':
+                    // 已消失,不再更新
+                    break;
+            }
+
+            // 同步主船的摆动节奏
+            // 使用与主船相同的时间基准,确保律动频率完全一致
+            if (companion.speed > 0.1) {
+                // 关键修改: 使用 gameState.time 而不是独立的 bobPhase
+                // 这样伴侣船的律动频率会随章节变化,与主船完全同步
+                companion.bobOffset = Math.sin(gameState.time * companion.bobSpeed + Math.PI) * companion.bobAmplitude * 0.8;
+            }
+            // 如果速度很小,保持当前的bobOffset不变,模拟停止时的状态
+        }
+
+        // 小孩船更新函数
+        function updateChild(timeScale) {
+            const child = gameState.child;
+            if (!child) return;
+
+            // 同步主船的律动参数
+            child.bobSpeed = gameState.boat.bobSpeed;
+            child.bobAmplitude = gameState.boat.bobAmplitude;
+
+            // 小孩船的目标位置 (在主船和伴侣船之间)
+            const targetX = gameState.boat.x - 35;  // 主船后方35像素,在主船和伴侣船中间
+            const targetY = gameState.boat.y + 10;  // 轻微偏下
+
+            // 不同阶段的行为
+            switch (child.phase) {
+                case 'appearing':
+                    // 从画面中央由小变大出现 (速度减慢一半)
+                    child.scale = Math.min(child.scale + 0.004 * timeScale, 0.5);  // 缩放速度从0.008减半到0.004
+                    child.opacity = Math.min(child.opacity + 0.005 * timeScale, 1);  // 淡入速度从0.01减半到0.005
+
+                    // 从中央向目标位置移动
+                    const dx = targetX - child.x;
+                    const dy = targetY - child.y;
+                    child.x += dx * 0.015 * timeScale;  // 移动速度从0.03减半到0.015
+                    child.y += dy * 0.015 * timeScale;
+
+                    // 当达到目标大小和位置时,切换到跟随状态
+                    if (child.scale >= 0.49 && Math.abs(dx) < 30) {
+                        child.phase = 'following';
+                        // 伴侣船向后调整位置,给小孩船腾出空间
+                        if (gameState.companion && gameState.companion.phase === 'following') {
+                            // 伴侣船新的跟随距离增加到60像素
+                        }
+                    }
+                    break;
+
+                case 'following':
+                    // 跟随在主船和伴侣船之间
+                    const followDx = targetX - child.x;
+                    const followDy = targetY - child.y;
+                    child.x += followDx * 0.1 * timeScale;
+                    child.y += followDy * 0.1 * timeScale;
+                    child.speed = gameState.boat.speed;
+                    child.opacity = 1;
+                    break;
+
+                case 'leaving':
+                    // 向前驶离,越来越小越来越淡 (进一步减慢速度)
+                    child.speed = gameState.boat.speed * 0.6;  // 速度从0.75降低到0.6
+                    child.x += child.speed * timeScale * 0.4;  // 向前移动速度从0.5降低到0.4
+                    child.scale = Math.max(child.scale - 0.0015 * timeScale, 0);  // 缩小速度从0.002降低到0.0015
+                    child.opacity = Math.max(child.opacity - 0.002 * timeScale, 0);  // 淡出速度从0.003降低到0.002
+
+                    if (child.opacity <= 0 || child.scale <= 0) {
+                        child.phase = 'gone';
+                    }
+                    break;
+
+                case 'gone':
+                    break;
+            }
+
+            // 同步主船的律动
+            if (child.speed > 0.1) {
+                child.bobOffset = Math.sin(gameState.time * child.bobSpeed + Math.PI * 0.5) * child.bobAmplitude * 0.6;
+            }
+        }
+
+        // 健康检查计数器
+        let healthCheckCounter = 0;
+
+        // Update game state
+        function update() {
+            const chapter = chapters[gameState.currentChapter];
+
+            // 周期性健康检查: 每60帧检查一次状态一致性
+            healthCheckCounter++;
+            if (healthCheckCounter >= 60) {
+                healthCheckCounter = 0;
+
+                // 检查isPressing状态与实际按键/触屏状态是否一致
+                const actualPressed = keyPressed || touchPressed;  // 同时考虑键盘和触屏
+                if (gameState.isPressing !== actualPressed) {
+                    console.warn('检测到按键状态不一致,修正中', {
+                        gameStateIsPressing: gameState.isPressing,
+                        keyPressed: keyPressed,
+                        touchPressed: touchPressed
+                    });
+                    gameState.isPressing = actualPressed;
+                    if (!actualPressed) {
+                        gameState.pressIntensity = 0;
+                        controlHint.classList.remove('pressing');
+                    }
+                }
+            }
+
+            // 异常检测: 如果速度超过正常值太多,说明出现了bug,强制重置
+            if (gameState.boat.speed > gameState.boat.maxSpeed * 2) {
+                console.warn('检测到异常速度,重置状态', {
+                    speed: gameState.boat.speed,
+                    maxSpeed: gameState.boat.maxSpeed,
+                    deltaTime: gameState.deltaTime,
+                    timeScale: (gameState.deltaTime / (1/60)),
+                    isPressing: gameState.isPressing,
+                    pressIntensity: gameState.pressIntensity
+                });
+                gameState.boat.speed = 0;
+                gameState.isPressing = false;
+                gameState.pressIntensity = 0;
+                keyPressed = false;
+                touchPressed = false;
+                controlHint.classList.remove('pressing');
+                pauseMusic();
+            }
+
+            // 安全检查: 确保speed和pressIntensity在合理范围内
+            gameState.boat.speed = Math.max(0, Math.min(gameState.boat.speed, gameState.boat.maxSpeed * 1.2));
+            gameState.pressIntensity = Math.max(0, Math.min(gameState.pressIntensity, 1));
+
+            // 使用deltaTime进行帧率独立的计算 (60fps = 1/60 ≈ 0.0167s)
+            // 原来的固定值是假设60fps,现在根据实际帧时间调整
+            const targetFrameTime = 1 / 60;
+            let timeScale = gameState.deltaTime > 0 ? gameState.deltaTime / targetFrameTime : 1;
+            // 限制timeScale在合理范围内,防止极端加速 (0.1x - 3x)
+            timeScale = Math.max(0.1, Math.min(timeScale, 3));
+
+            // Update press intensity with resistance
+            if (gameState.isPressing) {
+                gameState.pressIntensity = Math.min(gameState.pressIntensity + 0.05 * timeScale, 1);
+
+                // 中年负重感机制: 需要达到阈值才开始有效加速
+                let effectiveIntensity = gameState.pressIntensity;
+                if (chapter.heavyResistance && chapter.pressureThreshold) {
+                    // 只有超过阈值的部分才有效
+                    effectiveIntensity = Math.max(0, gameState.pressIntensity - chapter.pressureThreshold);
+                    // 重新映射到0-1范围,让达到阈值后仍能正常加速
+                    effectiveIntensity = effectiveIntensity / (1 - chapter.pressureThreshold);
+                }
+
+                const effectiveAccel = gameState.boat.acceleration / chapter.resistanceMultiplier;
+                gameState.boat.speed = Math.min(
+                    gameState.boat.speed + effectiveAccel * effectiveIntensity * timeScale,
+                    gameState.boat.maxSpeed
+                );
+            } else {
+                gameState.pressIntensity = Math.max(gameState.pressIntensity - 0.03 * timeScale, 0);
+                const effectiveDecel = gameState.boat.deceleration * (1 / chapter.inertiaMultiplier);
+                gameState.boat.speed = Math.max(
+                    gameState.boat.speed - effectiveDecel * timeScale,
+                    0
+                );
+            }
+
+            // Movement phase logic
+            const centerX = canvas.width / 2;
+            const speedWithTime = gameState.boat.speed * timeScale;
+
+            if (gameState.movementPhase === 'centering') {
+                // Phase 1: Boat moves from left to center
+                gameState.boat.x += speedWithTime;
+
+                if (gameState.boat.x >= centerX) {
+                    gameState.boat.x = centerX;
+                    gameState.movementPhase = 'scrolling';
+                }
+            } else if (gameState.movementPhase === 'scrolling') {
+                // Phase 2: Boat stays in center, background scrolls
+                gameState.boat.x = centerX;
+                gameState.backgroundOffset += speedWithTime;
+            }
+
+            gameState.distance += speedWithTime;
+
+            const progress = Math.min((gameState.distance / gameState.totalDistance) * 100, 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            gameState.boat.bobOffset = Math.sin(gameState.time * gameState.boat.bobSpeed) * gameState.boat.bobAmplitude;
+            gameState.boat.tilt = gameState.boat.speed * 0.015;
+            gameState.time += speedWithTime;
+            gameState.breathPhase += (gameState.isPressing ? 0.05 : 0.02) * timeScale;
+
+            // Update waves - only move when boat is moving
+            if (gameState.boat.speed > 0) {
+                gameState.waves.forEach(wave => {
+                    wave.x -= wave.speed * gameState.boat.speed * 0.35;
+                    if (wave.x + wave.length < 0) {
+                        wave.x = canvas.width + Math.random() * 300;
+                        wave.y = canvas.height / 2 + Math.random() * 250 - 125;
+                    }
+                });
+            }
+
+            // Update birds - only move when boat is moving
+            if (gameState.currentChapter === 1 && gameState.boat.speed > 0) {
+                gameState.birds.forEach(bird => {
+                    bird.x -= bird.speed * (gameState.boat.speed + 0.5);
+                    bird.wingPhase += 0.15;
+                    if (bird.x < -50) {
+                        bird.x = canvas.width + Math.random() * 200;
+                        bird.y = canvas.height * 0.15 + Math.random() * 150;
+                    }
+                });
+            }
+
+            // Update stars - only move when boat is moving
+            if (gameState.currentChapter === 4 && gameState.boat.speed > 0) {
+                gameState.stars.forEach(star => {
+                    star.x -= gameState.boat.speed * 0.1;
+                    star.twinklePhase += star.twinkleSpeed;
+                    if (star.x < -10) {
+                        star.x = canvas.width + Math.random() * 200;
+                    }
+                });
+            }
+
+            // Update clouds - only move when boat is moving
+            if (gameState.boat.speed > 0) {
+                gameState.clouds.forEach(cloud => {
+                    cloud.x -= cloud.speed * (gameState.boat.speed * 0.2 + 0.3);
+                    if (cloud.x + cloud.width < 0) {
+                        cloud.x = canvas.width + Math.random() * 300;
+                    }
+                });
+            }
+
+            // Update rain with varying intensity - only when moving
+            if (chapter.hasRain && gameState.boat.speed > 0) {
+                const rainIntensity = 0.8 + Math.sin(gameState.time * 0.01) * 0.2;
+                if (Math.random() < 0.4 * rainIntensity) {
+                    gameState.raindrops.push(new Raindrop(rainIntensity));
+                }
+            }
+            if (gameState.boat.speed > 0) {
+                gameState.raindrops = gameState.raindrops.filter(r => r.update());
+            }
+
+            // 伴侣船生命周期管理
+            const distance = gameState.distance;
+
+            // 第2章中间(29000)触发伴侣船出现
+            if (distance >= 29000 && distance < 37000 && !gameState.companion) {
+                gameState.companion = {
+                    x: canvas.width + 100,  // 从右侧远处出现
+                    y: canvas.height / 2 + 60,  // 稍微偏下
+                    opacity: 0,
+                    phase: 'approaching',
+                    bobOffset: 0,
+                    bobPhase: Math.PI,  // 与主船错开相位
+                    bobSpeed: gameState.boat.bobSpeed,  // 初始化律动速度
+                    bobAmplitude: gameState.boat.bobAmplitude,  // 初始化律动幅度
+                    speed: 0  // 伴侣船自己的速度
+                };
+            }
+
+            // 第4章中后段(54000)触发伴侣船离开
+            if (distance >= 54000 && gameState.companion && gameState.companion.phase !== 'leaving' && gameState.companion.phase !== 'gone') {
+                gameState.companion.phase = 'leaving';
+                gameState.companion.leavingSpeed = 0;  // 初始化离开速度为0,从0开始加速
+                gameState.companion.leavingAcceleration = 0.0001;  // 加速度
+            }
+
+            // 更新伴侣船
+            if (gameState.companion) {
+                updateCompanion(timeScale);
+            }
+
+            // 小孩船生命周期管理
+            // 第3章20%处(39800)触发小孩船出现
+            if (distance >= 39800 && distance < 48200 && !gameState.child) {
+                gameState.child = {
+                    x: canvas.width / 2,  // 从画面中央出现
+                    y: canvas.height / 2,
+                    opacity: 0,
+                    scale: 0.1,  // 从很小开始
+                    phase: 'appearing',
+                    bobOffset: 0,
+                    bobSpeed: gameState.boat.bobSpeed,
+                    bobAmplitude: gameState.boat.bobAmplitude,
+                    speed: 0
+                };
+            }
+
+            // 第3章80%处(48200)触发小孩船离开
+            if (distance >= 48200 && gameState.child && gameState.child.phase !== 'leaving' && gameState.child.phase !== 'gone') {
+                gameState.child.phase = 'leaving';
+            }
+
+            // 更新小孩船
+            if (gameState.child) {
+                updateChild(timeScale);
+            }
+
+            // Update companion boats - only when moving
+            if (gameState.boat.speed > 0) {
+                // 第0章(破晓)背景小船数量少一些,其它章节保持正常
+                const spawnRate = gameState.currentChapter === 0 ? 0.0008 : 0.002;
+                if (Math.random() < spawnRate) {
+                    gameState.companionBoats.push(new CompanionBoat());
+                }
+                gameState.companionBoats = gameState.companionBoats.filter(b => b.update());
+            }
+
+            // Update drifting items - only when moving
+            if (gameState.boat.speed > 0) {
+                gameState.driftingItems = gameState.driftingItems.filter(item => item.update());
+            }
+            gameState.driftingItems.forEach(item => item.checkCollision(gameState.boat));
+
+            // Update lighthouse
+            if (gameState.lighthouse) {
+                gameState.lighthouse.pulsePhase += 0.05;
+            }
+
+            // Create particles
+            if (gameState.boat.speed > 0.8 && Math.random() < 0.25 * chapter.waveIntensity) {
+                const particleCount = Math.min(chapter.particleCount, Math.floor(gameState.boat.speed * 3));
+                for (let i = 0; i < particleCount * 0.08; i++) {
+                    gameState.particles.push(new Particle(
+                        gameState.boat.x - 25,
+                        gameState.boat.y + gameState.boat.bobOffset + (Math.random() - 0.5) * 35,
+                        chapter.waveIntensity
+                    ));
+                }
+            }
+
+            gameState.particles = gameState.particles.filter(p => p.update());
+
+            updateChapter();
+
+            if (gameState.distance >= gameState.totalDistance) {
+                // Stop the boat immediately when reaching the end
+                gameState.boat.speed = 0;
+                gameState.isPressing = false;
+                gameState.pressIntensity = 0;
+                showEnding();
+            }
+        }
+
+        // Draw functions
+        function drawBackground() {
+            const chapter = chapters[gameState.currentChapter];
+
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
+            skyGradient.addColorStop(0, chapter.bgColors.sky[0]);
+            skyGradient.addColorStop(1, chapter.bgColors.sky[1]);
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+
+            const seaGradient = ctx.createLinearGradient(0, canvas.height / 2, 0, canvas.height);
+            seaGradient.addColorStop(0, chapter.bgColors.sea[0]);
+            seaGradient.addColorStop(1, chapter.bgColors.sea[1]);
+            ctx.fillStyle = seaGradient;
+            ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+        }
+
+        function drawBreathEffect() {
+            if (!gameState.isPressing || gameState.boat.speed < 0.5) return;
+
+            const chapter = chapters[gameState.currentChapter];
+
+            // 根据章节调整呼吸频率,与船的律动协调
+            const breathSpeed = gameState.boat.bobSpeed * 1.5; // 与船摇摆速度关联
+            const breathIntensity = (Math.sin(gameState.time * breathSpeed) + 1) / 2;
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.6;
+            const radius = maxRadius * breathIntensity * 0.3;
+
+            ctx.save();
+            ctx.globalAlpha = 0.05 * breathIntensity;
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // 圆圈跟随小船位置
+            ctx.arc(gameState.boat.x, gameState.boat.y + gameState.boat.bobOffset, radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawShadow() {
+            const chapter = chapters[gameState.currentChapter];
+
+            // 根据章节调整阴影大小,与主船体积同步
+            let shadowSizeScale = 1.0;
+            if (gameState.currentChapter === 0) {
+                shadowSizeScale = 0.6;  // 第0章 破晓 - 60%
+            } else if (gameState.currentChapter === 1) {
+                shadowSizeScale = 0.8;  // 第1章 晨光 - 80%
+            }
+
+            ctx.save();
+            ctx.globalAlpha = gameState.boat.shadowOpacity;
+            ctx.translate(gameState.boat.x, gameState.boat.y + gameState.boat.bobOffset + 60);
+            ctx.scale(gameState.boat.shadowScale * shadowSizeScale, 0.5 * shadowSizeScale);
+            ctx.rotate(-gameState.boat.tilt * 0.5);
+
+            // 序章(破晓) - 基础倒影
+            if (gameState.currentChapter === 0) {
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.15)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // 初章(晨光·童年) - 倒影带有梦幻般的翅膀延伸
+            else if (gameState.currentChapter === 1) {
+                const dreamPhase = Math.sin(gameState.time * 0.02) * 8;
+
+                // 主倒影
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.2)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.fill();
+
+                // 左翼 - 带有梦幻飘动效果
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.15)';
+                ctx.beginPath();
+                ctx.moveTo(-60, -25 + dreamPhase);
+                ctx.quadraticCurveTo(-55, -10, -35, 0);
+                ctx.lineTo(-40, 10);
+                ctx.quadraticCurveTo(-58, -5, -65, -20 + dreamPhase);
+                ctx.closePath();
+                ctx.fill();
+
+                // 右翼 - 对称梦幻飘动
+                ctx.beginPath();
+                ctx.moveTo(60, -25 + dreamPhase);
+                ctx.quadraticCurveTo(55, -10, 35, 0);
+                ctx.lineTo(40, 10);
+                ctx.quadraticCurveTo(58, -5, 65, -20 + dreamPhase);
+                ctx.closePath();
+                ctx.fill();
+
+                // 额外的梦幻粒子延伸
+                ctx.globalAlpha = gameState.boat.shadowOpacity * 0.3;
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i / 5) * Math.PI * 0.4 - Math.PI * 0.2;
+                    const dist = 70 + Math.sin(gameState.time * 0.03 + i) * 10;
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.cos(angle) * dist,
+                        -30 + Math.sin(angle) * dist + dreamPhase,
+                        2 + Math.sin(gameState.time * 0.05 + i) * 1,
+                        0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+                ctx.globalAlpha = gameState.boat.shadowOpacity;
+            }
+
+            // 征途(正午·青年) - 充满力量的倒影
+            else if (gameState.currentChapter === 2) {
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.25)';
+
+                // 主倒影
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.fill();
+
+                // 力量的波纹延伸
+                ctx.globalAlpha = gameState.boat.shadowOpacity * 0.4;
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(-35 - i * 8, i * 5);
+                    ctx.lineTo(35 + i * 8, i * 5);
+                    ctx.lineTo(25 + i * 6, 18 + i * 4);
+                    ctx.lineTo(-25 - i * 6, 18 + i * 4);
+                    ctx.closePath();
+                    ctx.globalAlpha = gameState.boat.shadowOpacity * (0.3 - i * 0.1);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = gameState.boat.shadowOpacity;
+            }
+
+            // 沉思(午后·中年) - 沉重拉长的倒影,带有负重感
+            else if (gameState.currentChapter === 3) {
+                const heavyPhase = Math.sin(gameState.time * 0.015) * 3;
+
+                // 简化的沉重倒影
+                ctx.globalAlpha = gameState.boat.shadowOpacity * 0.5;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.3)';
+                ctx.beginPath();
+                ctx.moveTo(-38, 5);
+                ctx.lineTo(38, 5);
+                ctx.lineTo(32, 35 + heavyPhase);
+                ctx.lineTo(-32, 35 + heavyPhase);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.globalAlpha = gameState.boat.shadowOpacity;
+            }
+
+            // 宁静(星夜·老年) - 倒影逐渐融合消散,轮廓模糊
+            else if (gameState.currentChapter === 4) {
+                const fadePhase = Math.sin(gameState.time * 0.01);
+                const blurOffset = 15;
+
+                // 创建渐变消散的倒影
+                ctx.globalAlpha = gameState.boat.shadowOpacity * (0.5 + fadePhase * 0.2);
+
+                // 最外层 - 模糊边缘
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.05)';
+                ctx.beginPath();
+                ctx.moveTo(-35 - blurOffset, -blurOffset);
+                ctx.lineTo(35 + blurOffset, -blurOffset);
+                ctx.lineTo(25 + blurOffset, 18 + blurOffset);
+                ctx.lineTo(-25 - blurOffset, 18 + blurOffset);
+                ctx.closePath();
+                ctx.fill();
+
+                // 中间层 - 半透明融合
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.08)';
+                ctx.beginPath();
+                ctx.moveTo(-35 - blurOffset * 0.6, -blurOffset * 0.6);
+                ctx.lineTo(35 + blurOffset * 0.6, -blurOffset * 0.6);
+                ctx.lineTo(25 + blurOffset * 0.6, 18 + blurOffset * 0.6);
+                ctx.lineTo(-25 - blurOffset * 0.6, 18 + blurOffset * 0.6);
+                ctx.closePath();
+                ctx.fill();
+
+                // 核心层 - 依稀可见
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.12)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.fill();
+
+                // 消散的粒子效果
+                ctx.globalAlpha = gameState.boat.shadowOpacity * 0.2;
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const dist = 40 + Math.sin(gameState.time * 0.02 + i) * 15;
+                    const size = 1 + Math.sin(gameState.time * 0.03 + i * 0.5) * 0.5;
+                    ctx.fillStyle = 'rgba(240, 240, 240, 0.1)';
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.cos(angle) * dist,
+                        10 + Math.sin(angle) * dist * 0.5,
+                        size,
+                        0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+
+                // 轮廓溶解线条
+                ctx.globalAlpha = gameState.boat.shadowOpacity * (0.3 + fadePhase * 0.15);
+                ctx.strokeStyle = 'rgba(240, 240, 240, 0.08)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.globalAlpha = gameState.boat.shadowOpacity;
+            }
+
+            ctx.restore();
+        }
+
+        // 绘制伴侣船阴影 (与主船相同的章节阴影,但缩放0.75倍)
+        function drawCompanionShadow() {
+            const companion = gameState.companion;
+            if (!companion || companion.phase === 'gone' || companion.opacity <= 0) return;
+
+            const chapter = chapters[gameState.currentChapter];
+            const scale = 0.75;  // 伴侣船体积比例
+
+            ctx.save();
+            ctx.globalAlpha = gameState.boat.shadowOpacity * companion.opacity * scale;
+            ctx.translate(companion.x, companion.y + companion.bobOffset + 60);
+            ctx.scale(gameState.boat.shadowScale * scale, 0.5 * scale);
+            ctx.rotate(-Math.sin(companion.bobPhase * 0.5) * 0.03 * 0.5);
+
+            // 根据章节绘制不同的阴影 (与主船相同逻辑,但缩小比例)
+            if (gameState.currentChapter === 0) {
+                // 序章 - 基础倒影
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.15)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 1) {
+                // 初章 - 梦幻般的翅膀延伸
+                const dreamPhase = Math.sin(gameState.time * 0.02) * 8;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.2)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25 + dreamPhase, 18);
+                ctx.lineTo(-25 - dreamPhase, 18);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 2) {
+                // 征途 - 劲道十足的力量倒影
+                const powerPhase = Math.sin(gameState.time * 0.05) * 5;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.25)';
+                ctx.beginPath();
+                ctx.moveTo(-38, 0);
+                ctx.lineTo(38, 0);
+                ctx.lineTo(28 + powerPhase, 20);
+                ctx.lineTo(-28 - powerPhase, 20);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 3) {
+                // 沉思 - 沉重的负重倒影
+                const heavyPhase = Math.sin(gameState.time * 0.015) * 3;
+                ctx.globalAlpha = gameState.boat.shadowOpacity * companion.opacity * 0.5 * scale;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.3)';
+                ctx.beginPath();
+                ctx.moveTo(-38, 5);
+                ctx.lineTo(38, 5);
+                ctx.lineTo(32, 35 + heavyPhase);
+                ctx.lineTo(-32, 35 + heavyPhase);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 4) {
+                // 宁静 - 消散模糊的倒影
+                const fadePhase = Math.sin(gameState.time * 0.01);
+                const blurOffset = 8 + fadePhase * 4;
+                ctx.globalAlpha = gameState.boat.shadowOpacity * companion.opacity * 0.6 * scale;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.1)';
+                ctx.filter = 'blur(3px)';
+                ctx.beginPath();
+                ctx.moveTo(-35 - blurOffset, -blurOffset);
+                ctx.lineTo(35 + blurOffset, -blurOffset);
+                ctx.lineTo(25 + blurOffset, 18 + blurOffset);
+                ctx.lineTo(-25 - blurOffset, 18 + blurOffset);
+                ctx.closePath();
+                ctx.fill();
+                ctx.filter = 'none';
+            }
+
+            ctx.restore();
+        }
+
+        function drawStars() {
+            if (gameState.currentChapter !== 4) return;
+
+            gameState.stars.forEach(star => {
+                const twinkle = (Math.sin(star.twinklePhase) + 1) / 2;
+                ctx.save();
+                ctx.globalAlpha = star.opacity * twinkle;
+                ctx.fillStyle = '#f0f0f0';
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function drawClouds() {
+            if (gameState.currentChapter === 0 || gameState.currentChapter === 4) return;
+
+            ctx.save();
+            gameState.clouds.forEach(cloud => {
+                ctx.globalAlpha = cloud.opacity;
+                ctx.fillStyle = '#f0f0f0';
+
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.height * 0.4, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width * 0.3, cloud.y - cloud.height * 0.2, cloud.height * 0.5, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width * 0.6, cloud.y, cloud.height * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+        }
+
+        // 绘制小孩船阴影 (与主船相同的章节阴影,但缩放0.5倍)
+        function drawChildShadow() {
+            const child = gameState.child;
+            if (!child || child.phase === 'gone' || child.opacity <= 0 || child.scale <= 0) return;
+
+            const chapter = chapters[gameState.currentChapter];
+            const scale = 0.5;  // 小孩船体积比例
+
+            ctx.save();
+            ctx.globalAlpha = gameState.boat.shadowOpacity * child.opacity * scale;
+            ctx.translate(child.x, child.y + child.bobOffset + 60);
+            ctx.scale(gameState.boat.shadowScale * scale, 0.5 * scale);
+            ctx.rotate(-Math.sin(gameState.time * 0.02) * 0.03 * 0.5);
+
+            // 根据章节绘制不同的阴影 (与主船相同逻辑,但缩小比例)
+            if (gameState.currentChapter === 0) {
+                // 序章 - 基础倒影
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.15)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 1) {
+                // 初章 - 梦幻般的翅膀延伸
+                const dreamPhase = Math.sin(gameState.time * 0.02) * 8;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.2)';
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25 + dreamPhase, 18);
+                ctx.lineTo(-25 - dreamPhase, 18);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 2) {
+                // 征途 - 劲道十足的力量倒影
+                const powerPhase = Math.sin(gameState.time * 0.05) * 5;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.25)';
+                ctx.beginPath();
+                ctx.moveTo(-38, 0);
+                ctx.lineTo(38, 0);
+                ctx.lineTo(28 + powerPhase, 20);
+                ctx.lineTo(-28 - powerPhase, 20);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 3) {
+                // 沉思 - 沉重的负重倒影
+                const heavyPhase = Math.sin(gameState.time * 0.015) * 3;
+                ctx.globalAlpha = gameState.boat.shadowOpacity * child.opacity * 0.5 * scale;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.3)';
+                ctx.beginPath();
+                ctx.moveTo(-38, 5);
+                ctx.lineTo(38, 5);
+                ctx.lineTo(32, 35 + heavyPhase);
+                ctx.lineTo(-32, 35 + heavyPhase);
+                ctx.closePath();
+                ctx.fill();
+            }
+            else if (gameState.currentChapter === 4) {
+                // 宁静 - 消散模糊的倒影
+                const fadePhase = Math.sin(gameState.time * 0.01);
+                const blurOffset = 8 + fadePhase * 4;
+                ctx.globalAlpha = gameState.boat.shadowOpacity * child.opacity * 0.6 * scale;
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.1)';
+                ctx.filter = 'blur(3px)';
+
+                // 中心基础形状
+                ctx.beginPath();
+                ctx.moveTo(-35, 5);
+                ctx.lineTo(35, 5);
+                ctx.lineTo(25, 30);
+                ctx.lineTo(-25, 30);
+                ctx.closePath();
+                ctx.fill();
+
+                // 模糊分散的粒子效果
+                ctx.globalAlpha = gameState.boat.shadowOpacity * child.opacity * (0.4 + fadePhase * 0.2) * scale;
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2 + fadePhase;
+                    const dist = 25 + Math.sin(angle * 3 + gameState.time * 0.02) * blurOffset;
+                    const size = 2 + Math.sin(angle * 2) * 1.5;
+
+                    ctx.fillStyle = 'rgba(240, 240, 240, 0.12)';
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.cos(angle) * dist,
+                        10 + Math.sin(angle) * dist * 0.5,
+                        size,
+                        0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+
+                // 轮廓溶解线条
+                ctx.globalAlpha = gameState.boat.shadowOpacity * child.opacity * (0.3 + fadePhase * 0.15) * scale;
+                ctx.strokeStyle = 'rgba(240, 240, 240, 0.08)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(-35, 0);
+                ctx.lineTo(35, 0);
+                ctx.lineTo(25, 18);
+                ctx.lineTo(-25, 18);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.globalAlpha = gameState.boat.shadowOpacity * child.opacity * scale;
+            }
+
+            ctx.restore();
+        }
+
+        function drawHorizon() {
+            ctx.strokeStyle = 'rgba(240, 240, 240, 0.08)';  // 降低透明度从0.25到0.08
+            ctx.lineWidth = 1;
+            ctx.setLineDash([15, 15]);
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawWaves() {
+            const chapter = chapters[gameState.currentChapter];
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1.5;
+
+            gameState.waves.forEach(wave => {
+                ctx.save();
+                ctx.globalAlpha = wave.opacity * chapter.waveIntensity;
+                ctx.beginPath();
+
+                for (let i = 0; i < wave.length; i += 3) {
+                    const x = wave.x + i;
+                    const y = wave.y + Math.sin((i + gameState.time * 0.5 + wave.offset) * wave.frequency * chapter.waveFrequency) *
+                              wave.amplitude * chapter.waveIntensity;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+                ctx.restore();
+            });
+        }
+
+        function drawRain() {
+            gameState.raindrops.forEach(r => r.draw(ctx));
+        }
+
+        function drawBirds() {
+            if (gameState.currentChapter !== 1) return;
+
+            ctx.strokeStyle = 'rgba(240, 240, 240, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+
+            gameState.birds.forEach(bird => {
+                ctx.save();
+                ctx.translate(bird.x, bird.y);
+                ctx.scale(bird.scale, bird.scale);
+
+                const wingAngle = Math.sin(bird.wingPhase) * 0.5;
+
+                ctx.beginPath();
+                ctx.moveTo(-8, 0);
+                ctx.quadraticCurveTo(-12, -8 - wingAngle * 8, -18, -4 - wingAngle * 10);
+                ctx.moveTo(8, 0);
+                ctx.quadraticCurveTo(12, -8 - wingAngle * 8, 18, -4 - wingAngle * 10);
+                ctx.stroke();
+
+                ctx.restore();
+            });
+        }
+
+        function drawCompanionBoats() {
+            gameState.companionBoats.forEach(b => b.draw(ctx));
+        }
+
+        function drawDriftingItems() {
+            gameState.driftingItems.forEach(item => item.draw(ctx));
+        }
+
+        function drawLighthouse() {
+            if (!gameState.lighthouse) return;
+
+            const pulse = (Math.sin(gameState.lighthouse.pulsePhase) + 1) / 2;
+
+            ctx.save();
+            ctx.translate(gameState.lighthouse.x, gameState.lighthouse.y);
+
+            ctx.globalAlpha = 0.4 + pulse * 0.3;
+            ctx.fillStyle = '#f0f0f0';
+            ctx.beginPath();
+            ctx.arc(0, 0, 3 + pulse * 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.globalAlpha = 0.2 + pulse * 0.2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 10 + pulse * 5, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawBoat() {
+            ctx.save();
+            ctx.translate(gameState.boat.x, gameState.boat.y + gameState.boat.bobOffset);
+            ctx.rotate(gameState.boat.tilt + Math.sin(gameState.time * 0.03) * 0.05);
+
+            // 根据章节调整主船体积
+            let boatScale = 1.0;  // 默认100%
+            if (gameState.currentChapter === 0) {
+                boatScale = 0.6;  // 第0章 破晓 - 60%
+            } else if (gameState.currentChapter === 1) {
+                boatScale = 0.8;  // 第1章 晨光 - 80%
+            }
+            ctx.scale(boatScale, boatScale);
+
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(-35, 0);
+            ctx.lineTo(35, 0);
+            ctx.lineTo(25, 18);
+            ctx.lineTo(-25, 18);
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(-30, 5);
+            ctx.lineTo(30, 5);
+            ctx.stroke();
+
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -50);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(240, 240, 240, 0.08)';
+            ctx.beginPath();
+            ctx.moveTo(0, -8);
+            ctx.quadraticCurveTo(25, -20, 25, -42);
+            ctx.lineTo(0, -50);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, -25);
+            ctx.lineTo(20, -25);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // 绘制伴侣船
+        function drawCompanionBoat() {
+            const companion = gameState.companion;
+            if (!companion || companion.phase === 'gone' || companion.opacity <= 0) return;
+
+            ctx.save();
+            ctx.globalAlpha = companion.opacity;
+
+            // 伴侣船位置和摆动
+            ctx.translate(companion.x, companion.y + companion.bobOffset);
+            ctx.rotate(Math.sin(companion.bobPhase * 0.5) * 0.03);
+
+            // 伴侣船稍小一些(缩放0.75)
+            ctx.scale(0.75, 0.75);
+
+            // 绘制船体
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            // 船身
+            ctx.beginPath();
+            ctx.moveTo(-35, 0);
+            ctx.lineTo(35, 0);
+            ctx.lineTo(25, 18);
+            ctx.lineTo(-25, 18);
+            ctx.closePath();
+            ctx.stroke();
+
+            // 船舱横线
+            ctx.beginPath();
+            ctx.moveTo(-30, 5);
+            ctx.lineTo(30, 5);
+            ctx.stroke();
+
+            // 桅杆
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -50);
+            ctx.stroke();
+
+            // 帆
+            ctx.fillStyle = 'rgba(240, 240, 240, 0.08)';
+            ctx.beginPath();
+            ctx.moveTo(0, -8);
+            ctx.quadraticCurveTo(25, -20, 25, -42);
+            ctx.lineTo(0, -50);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 帆杆
+            ctx.beginPath();
+            ctx.moveTo(0, -25);
+            ctx.lineTo(20, -25);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // 绘制小孩船
+        function drawChildBoat() {
+            const child = gameState.child;
+            if (!child || child.phase === 'gone' || child.opacity <= 0 || child.scale <= 0) return;
+
+            ctx.save();
+            ctx.globalAlpha = child.opacity;
+
+            // 小孩船位置和摆动
+            ctx.translate(child.x, child.y + child.bobOffset);
+            ctx.rotate(Math.sin(gameState.time * 0.04) * 0.02);
+
+            // 小孩船缩放(比伴侣船更小)
+            ctx.scale(child.scale, child.scale);
+
+            // 绘制船体
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            // 船身
+            ctx.beginPath();
+            ctx.moveTo(-35, 0);
+            ctx.lineTo(35, 0);
+            ctx.lineTo(25, 18);
+            ctx.lineTo(-25, 18);
+            ctx.closePath();
+            ctx.stroke();
+
+            // 船舱横线
+            ctx.beginPath();
+            ctx.moveTo(-30, 5);
+            ctx.lineTo(30, 5);
+            ctx.stroke();
+
+            // 桅杆
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -50);
+            ctx.stroke();
+
+            // 帆
+            ctx.fillStyle = 'rgba(240, 240, 240, 0.08)';
+            ctx.beginPath();
+            ctx.moveTo(0, -8);
+            ctx.quadraticCurveTo(25, -20, 25, -42);
+            ctx.lineTo(0, -50);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 帆杆
+            ctx.beginPath();
+            ctx.moveTo(0, -25);
+            ctx.lineTo(20, -25);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawParticles() {
+            gameState.particles.forEach(p => p.draw(ctx));
+        }
+
+        function drawFog() {
+            const chapter = chapters[gameState.currentChapter];
+            if (!chapter.hasFog) return;
+
+            ctx.save();
+
+            // 动态雾气呼吸效果
+            const fogBreath = Math.sin(gameState.time * 0.008) * 0.1 + 1;
+            const fogDrift = Math.sin(gameState.time * 0.005) * 50;
+
+            // 第一层 - 外围浓雾
+            const outerFog = ctx.createRadialGradient(
+                canvas.width / 2 + fogDrift, canvas.height / 2, 0,
+                canvas.width / 2 + fogDrift, canvas.height / 2, canvas.width * 0.8 * fogBreath
+            );
+            outerFog.addColorStop(0, 'transparent');
+            outerFog.addColorStop(0.6, `rgba(240, 240, 240, ${chapter.fogIntensity * 0.15})`);
+            outerFog.addColorStop(1, `rgba(240, 240, 240, ${chapter.fogIntensity * 0.25})`);
+            ctx.fillStyle = outerFog;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 第二层 - 中层流动雾
+            const midFog = ctx.createRadialGradient(
+                canvas.width / 2 - fogDrift * 0.5, canvas.height / 2, 0,
+                canvas.width / 2 - fogDrift * 0.5, canvas.height / 2, canvas.width * 0.5
+            );
+            midFog.addColorStop(0, 'transparent');
+            midFog.addColorStop(0.8, `rgba(240, 240, 240, ${chapter.fogIntensity * 0.1})`);
+            midFog.addColorStop(1, `rgba(240, 240, 240, ${chapter.fogIntensity * 0.18})`);
+            ctx.fillStyle = midFog;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 第三层 - 近景薄雾条带
+            ctx.globalAlpha = chapter.fogIntensity * 0.15;
+            for (let i = 0; i < 3; i++) {
+                const offset = Math.sin(gameState.time * 0.003 + i * Math.PI * 0.7) * 100;
+                const fogBand = ctx.createLinearGradient(
+                    0, canvas.height * (0.3 + i * 0.2) + offset,
+                    0, canvas.height * (0.4 + i * 0.2) + offset
+                );
+                fogBand.addColorStop(0, 'transparent');
+                fogBand.addColorStop(0.5, `rgba(240, 240, 240, ${0.1 + i * 0.05})`);
+                fogBand.addColorStop(1, 'transparent');
+                ctx.fillStyle = fogBand;
+                ctx.fillRect(0, canvas.height * (0.3 + i * 0.2) + offset - 50, canvas.width, 100);
+            }
+
+            // 第四层 - 漂浮雾气粒子
+            ctx.globalAlpha = chapter.fogIntensity * 0.08;
+            for (let i = 0; i < 12; i++) {
+                const x = (canvas.width / 12) * i + Math.sin(gameState.time * 0.002 + i) * 80;
+                const y = canvas.height * (0.3 + Math.sin(gameState.time * 0.003 + i * 0.5) * 0.3);
+                const size = 40 + Math.sin(gameState.time * 0.004 + i) * 20;
+
+                const particleFog = ctx.createRadialGradient(x, y, 0, x, y, size);
+                particleFog.addColorStop(0, `rgba(240, 240, 240, ${0.15 * fogBreath})`);
+                particleFog.addColorStop(1, 'transparent');
+                ctx.fillStyle = particleFog;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function draw() {
+            drawBackground();
+            drawStars();
+            drawClouds();
+            drawHorizon();  // 水平虚线,降低透明度
+            drawWaves();
+            drawLighthouse();
+            drawCompanionBoats();
+            drawDriftingItems();
+            drawShadow();
+            drawCompanionShadow();  // 伴侣船阴影
+            drawChildShadow();  // 小孩船阴影
+            drawBirds();
+            drawParticles();
+            drawRain();
+            drawCompanionBoat();  // 伴侣船在主船之前绘制
+            drawChildBoat();  // 小孩船在主船之前绘制
+            drawBoat();
+            drawFog();
+            drawBreathEffect();
+        }
+
+        function showEnding() {
+            gameState.started = false;
+            gameState.ended = true;
+            silenceAllAudio(4);
+
+            // Start playing first chapter music continuously after fade out
+            setTimeout(() => {
+                document.getElementById('endingScreen').classList.add('active');
+                // Play first chapter music in loop, not affected by space key
+                if (chapters[0].musicUrl) {
+                    playChapterMusic(chapters[0].musicUrl, true, 0);
+                }
+            }, 4500);
+        }
+
+        function gameLoop(timestamp) {
+            if (!gameState.started && gameState.distance < gameState.totalDistance) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            // 计算deltaTime (秒),限制最大值防止标签页切换导致的时间跳跃
+            if (gameState.lastTimestamp === 0) {
+                gameState.lastTimestamp = timestamp;
+                // 第一帧不更新,只初始化时间戳
+                draw();
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            let rawDelta = (timestamp - gameState.lastTimestamp) / 1000;
+            // 限制deltaTime在合理范围内: 最小1ms,最大100ms
+            gameState.deltaTime = Math.max(0.001, Math.min(rawDelta, 0.1));
+            gameState.lastTimestamp = timestamp;
+
+            // 安全检查: 如果游戏已结束,停止更新但继续绘制
+            if (gameState.ended) {
+                draw();
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            update();
+            draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('resize', () => {
+            gameState.boat.y = canvas.height / 2;
+        });
+
+        // Monitor journey name input
+        const journeyNameInput = document.getElementById('journeyName');
+        const shareBtn = document.getElementById('shareBtn');
+
+        journeyNameInput.addEventListener('input', (e) => {
+            if (e.target.value.trim().length > 0) {
+                shareBtn.disabled = false;
+            } else {
+                shareBtn.disabled = true;
+            }
+        });
+
+        // Generate share image
+        function generateShareImage() {
+            const journeyName = journeyNameInput.value.trim() || '无名之旅';
+
+            // Show loading state
+            shareBtn.classList.add('loading');
+            shareBtn.textContent = '';
+
+            // Use setTimeout to allow UI to update before heavy canvas operation
+            setTimeout(() => {
+                // Create a vertical canvas for share image (9:16 ratio) - reduced size for performance
+                const shareCanvas = document.createElement('canvas');
+                shareCanvas.width = 720;
+                shareCanvas.height = 1280;
+                const sCtx = shareCanvas.getContext('2d', { alpha: false });
+
+                // Background gradient
+                const bgGradient = sCtx.createLinearGradient(0, 0, 0, 1280);
+                bgGradient.addColorStop(0, '#0a0a0a');
+                bgGradient.addColorStop(0.5, '#1a1a1a');
+                bgGradient.addColorStop(1, '#2a2a2a');
+                sCtx.fillStyle = bgGradient;
+                sCtx.fillRect(0, 0, 720, 1280);
+
+                // Draw boat icon
+                sCtx.save();
+                sCtx.translate(360, 260);
+                sCtx.scale(2, 2);
+                sCtx.strokeStyle = '#f0f0f0';
+                sCtx.lineWidth = 2.5;
+                sCtx.beginPath();
+                sCtx.moveTo(-35, 0);
+                sCtx.lineTo(35, 0);
+                sCtx.lineTo(25, 18);
+                sCtx.lineTo(-25, 18);
+                sCtx.closePath();
+                sCtx.stroke();
+                sCtx.beginPath();
+                sCtx.moveTo(0, 0);
+                sCtx.lineTo(0, -50);
+                sCtx.stroke();
+                sCtx.restore();
+
+                // Title
+                sCtx.fillStyle = '#f0f0f0';
+                sCtx.font = '600 48px STKaiti, KaiTi, serif';
+                sCtx.textAlign = 'center';
+                sCtx.fillText('一苇', 360, 400);
+
+                // Journey name
+                sCtx.font = '500 38px STKaiti, KaiTi, serif';
+                sCtx.fillText(`「 ${journeyName} 」`, 360, 500);
+
+                // Chapter timeline
+                const chapterNames = ['破晓', '晨光', '正午', '午后', '星夜'];
+                const startY = 600;
+                const spacing = 80;
+
+                chapterNames.forEach((name, index) => {
+                    const y = startY + index * spacing;
+
+                    // Line
+                    sCtx.strokeStyle = 'rgba(240, 240, 240, 0.3)';
+                    sCtx.lineWidth = 1.5;
+                    sCtx.beginPath();
+                    sCtx.moveTo(130, y);
+                    sCtx.lineTo(590, y);
+                    sCtx.stroke();
+
+                    // Circle
+                    sCtx.fillStyle = 'rgba(240, 240, 240, 0.2)';
+                    sCtx.beginPath();
+                    sCtx.arc(360, y, 10, 0, Math.PI * 2);
+                    sCtx.fill();
+
+                    // Chapter name
+                    sCtx.fillStyle = '#f0f0f0';
+                    sCtx.font = '400 24px STKaiti, KaiTi, serif';
+                    sCtx.fillText(name, 360, y + 37);
+                });
+
+                // Footer text
+                sCtx.fillStyle = 'rgba(240, 240, 240, 0.6)';
+                sCtx.font = '300 22px STKaiti, KaiTi, serif';
+                sCtx.fillText('一段关于人生的航行', 360, 1140);
+
+                sCtx.font = 'italic 300 19px STKaiti, KaiTi, serif';
+                sCtx.fillText('Adrift', 360, 1175);
+
+                // Date
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+                sCtx.font = '300 16px STKaiti, KaiTi, serif';
+                sCtx.fillStyle = 'rgba(240, 240, 240, 0.4)';
+                sCtx.fillText(dateStr, 360, 1230);
+
+                // Convert to blob and show preview (不自动下载)
+                shareCanvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+
+                    // 保存下载信息供手动下载使用
+                    window.shareImageData = {
+                        url: url,
+                        filename: `一苇_${journeyName}_${dateStr}.png`
+                    };
+
+                    // Display preview in dialog
+                    const previewImg = document.getElementById('previewImage');
+                    const previewContainer = document.getElementById('shareImagePreview');
+                    previewImg.src = url;
+                    previewContainer.style.display = 'block';
+
+                    // Restore button state
+                    shareBtn.classList.remove('loading');
+                    shareBtn.textContent = '生成分享卡片';
+
+                    // Update URL with query parameters
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.set('page', 'share');
+                    newUrl.searchParams.set('name', encodeURIComponent(journeyName));
+                    window.history.pushState({}, '', newUrl);
+
+                    // Show share dialog
+                    document.getElementById('shareDialog').classList.add('active');
+                }, 'image/png');
+            }, 50); // 50ms delay to allow UI update
+        }
+
+        // 手动下载分享图片
+        function downloadShareImage() {
+            if (!window.shareImageData) return;
+
+            const a = document.createElement('a');
+            a.href = window.shareImageData.url;
+            a.download = window.shareImageData.filename;
+            a.click();
+        }
+
+        // 处理确认按钮点击事件
+        function handleConfirmClick() {
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            // 如果还未下载，执行下载
+            if (confirmBtn.textContent.includes('好的') || confirmBtn.textContent.includes('OK')) {
+                downloadShareImage();
+                confirmBtn.textContent = '已下载 / Downloaded';
+                confirmBtn.disabled = true;
+                confirmBtn.style.opacity = '0.7';
+                confirmBtn.style.cursor = 'default';
+            }
+        }
+
+        // 打开图片放大查看
+        function openImageLightbox() {
+            const previewImg = document.getElementById('previewImage');
+            const lightbox = document.getElementById('imageLightbox');
+            const lightboxImg = document.getElementById('lightboxImage');
+            const closeBtn = document.getElementById('lightboxCloseBtn');
+
+            // 设置大图源为预览图的源
+            lightboxImg.src = previewImg.src;
+
+            // 显示灯箱并淡入
+            lightbox.style.opacity = '0';
+            lightbox.style.display = 'block';
+            lightbox.style.transition = 'opacity 0.3s ease';
+
+            // 强制重绘后开始淡入
+            requestAnimationFrame(() => {
+                lightbox.style.opacity = '1';
+            });
+
+            // 添加点击事件监听
+            if (!window.lightboxEventsAdded) {
+                // 点击遮罩关闭
+                lightbox.addEventListener('click', function(e) {
+                    if (e.target === lightbox) {
+                        closeImageLightbox();
+                    }
+                });
+
+                // 点击图片也关闭
+                lightboxImg.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeImageLightbox();
+                });
+
+                // 点击关闭按钮
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeImageLightbox();
+                });
+
+                // 关闭按钮悬停效果
+                closeBtn.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(240,240,240,0.25)';
+                    this.style.transform = 'scale(1.1) rotate(90deg)';
+                    this.style.borderColor = 'rgba(240,240,240,0.5)';
+                });
+
+                closeBtn.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(240,240,240,0.1)';
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                    this.style.borderColor = 'rgba(240,240,240,0.3)';
+                });
+
+                window.lightboxEventsAdded = true;
+            }
+
+            // 添加ESC键监听
+            if (!window.lightboxEscapeAdded) {
+                document.addEventListener('keydown', handleLightboxEscape);
+                window.lightboxEscapeAdded = true;
+            }
+        }
+
+        // 处理ESC键关闭灯箱
+        function handleLightboxEscape(e) {
+            if (e.key === 'Escape' || e.key === 'Esc') {
+                closeImageLightbox();
+            }
+        }
+
+        // 关闭图片放大查看
+        function closeImageLightbox() {
+            const lightbox = document.getElementById('imageLightbox');
+            if (!lightbox || lightbox.style.display === 'none') return;
+
+            // 移除ESC键监听
+            if (window.lightboxEscapeAdded) {
+                document.removeEventListener('keydown', handleLightboxEscape);
+                window.lightboxEscapeAdded = false;
+            }
+
+            // 淡出动画
+            lightbox.style.opacity = '0';
+            setTimeout(() => {
+                lightbox.style.display = 'none';
+            }, 300);
+        }
+
+        function closeShareDialog() {
+            const dialog = document.getElementById('shareDialog');
+            const previewImg = document.getElementById('previewImage');
+            const previewContainer = document.getElementById('shareImagePreview');
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            // Clean up blob URL to prevent memory leak
+            if (previewImg.src && previewImg.src.startsWith('blob:')) {
+                URL.revokeObjectURL(previewImg.src);
+            }
+
+            // Clean up share data
+            if (window.shareImageData) {
+                delete window.shareImageData;
+            }
+
+            // Reset confirm button state
+            confirmBtn.textContent = '好的 / OK';
+            confirmBtn.disabled = false;
+            confirmBtn.style.opacity = '1';
+            confirmBtn.style.cursor = 'pointer';
+
+            // Hide preview and clear source
+            previewContainer.style.display = 'none';
+            previewImg.src = '';
+
+            // Remove URL query parameters
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.delete('page');
+            newUrl.searchParams.delete('name');
+            window.history.pushState({}, '', newUrl);
+
+            // Close dialog
+            dialog.classList.remove('active');
+        }
+
+        // 为开始按钮添加触屏事件支持（解决部分移动设备 onclick 不响应的问题）
+        const instructionBtn = document.querySelector('.instruction');
+        if (instructionBtn) {
+            instructionBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                startGame();
+            }, { passive: false });
+        }
+
+        // 绘制初始画面(包含所有元素)
+        draw();
+
+        // 检查 URL 参数，如果有分享参数则直接进入结束画面并生成分享卡片
+        (function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = urlParams.get('page');
+            const name = urlParams.get('name');
+
+            if (page === 'share' && name) {
+                // 隐藏开始指令
+                const instruction = document.querySelector('.instruction');
+                if (instruction) {
+                    instruction.style.display = 'none';
+                }
+
+                // 显示结束画面
+                const endingScreen = document.getElementById('endingScreen');
+                endingScreen.classList.add('active');
+
+                // 填入姓名
+                const journeyNameInput = document.getElementById('journeyName');
+                journeyNameInput.value = decodeURIComponent(name);
+
+                // 启用分享按钮
+                const shareBtn = document.getElementById('shareBtn');
+                shareBtn.disabled = false;
+
+                // 延迟生成分享卡片，等待 DOM 完全渲染
+                setTimeout(() => {
+                    generateShareImage();
+                }, 500);
+            }
+        })();
+    </script>
+
+<!-- Element Selector Loader (Auto-injected by Vite) -->
+<script>
+(function() {
+  console.log('[ElementSelectorLoader] Initializing...');
+  let scriptInjected = false;
+  window.addEventListener('message', function(event) {
+    if (!event.data || event.data.type !== 'inject-element-selector-script') return;
+    if (scriptInjected) { console.log('[ElementSelectorLoader] Script already injected, skipping'); return; }
+    console.log('[ElementSelectorLoader] Received script injection request');
+    const script = event.data.script;
+    if (!script) { console.error('[ElementSelectorLoader] No script content received'); return; }
+    try {
+      const scriptElement = document.createElement('script');
+      scriptElement.id = 'element-selector-injected';
+      scriptElement.textContent = script;
+      const target = document.head || document.body;
+      if (target) {
+        target.appendChild(scriptElement);
+        scriptInjected = true;
+        console.log('[ElementSelectorLoader] Script injected and executed successfully');
+        if (window.parent) window.parent.postMessage({ type: 'element-selector-script-injected', success: true }, "*");
+      } else {
+        console.error('[ElementSelectorLoader] No head or body element found');
+      }
+    } catch (error) {
+      console.error('[ElementSelectorLoader] Failed to inject script:', error);
+      if (window.parent) window.parent.postMessage({ type: 'element-selector-script-injected', success: false, error: error.message }, "*");
+    }
+  });
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'element-selector-loader-ready' }, "*");
+    console.log('[ElementSelectorLoader] Ready and waiting for injection request');
+  }
+})();
+</script>
+</body>
+</html>
