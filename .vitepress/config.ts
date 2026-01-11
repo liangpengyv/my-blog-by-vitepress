@@ -76,6 +76,18 @@ export default defineConfig({
         icon: 'bilibili',
         link: 'https://space.bilibili.com/222021151',
       },
+      {
+        icon: {
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m3.55 13.8l-4.08-2.51c-.3-.18-.48-.5-.48-.85V7.75c.01-.41.35-.75.76-.75s.75.34.75.75v4.45l3.84 2.31c.36.22.48.69.26 1.05c-.22.35-.69.46-1.05.24"/></svg>',
+        },
+        link: '/clock',
+      },
+      {
+        icon: {
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15 7.29V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v4.29c0 .13.05.26.15.35l2.5 2.5c.2.2.51.2.71 0l2.5-2.5c.09-.09.14-.21.14-.35M7.29 9H3c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h4.29c.13 0 .26-.05.35-.15l2.5-2.5c.2-.2.2-.51 0-.71l-2.5-2.5A.48.48 0 0 0 7.29 9M9 16.71V21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-4.29a.47.47 0 0 0-.15-.35l-2.5-2.5c-.2-.2-.51-.2-.71 0l-2.5 2.5c-.09.09-.14.21-.14.35m7.35-7.56l-2.5 2.5c-.2.2-.2.51 0 .71l2.5 2.5c.09.09.22.15.35.15H21c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1h-4.29a.45.45 0 0 0-.36.14"/></svg>',
+        },
+        link: '/adrift',
+      },
     ],
     footer: {
       copyright: `版权所有 © 2015 - ${new Date().getFullYear()} By <a href="/about/" style="text-decoration: none">老梁</a><br /><a href="http://beian.miit.gov.cn/" target="__blank" style="text-decoration: none">蜀ICP备18017114号-1</a>`,
