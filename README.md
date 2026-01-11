@@ -1,6 +1,3 @@
 # my-blog
 
-## TODO
-
-- [ ] 路由切换 Loading
-- [ ] 图片懒加载
+> Combining [vitepress](https://vitepress.dev/) and [fluxpress](https://fluxpress.github.io/)
