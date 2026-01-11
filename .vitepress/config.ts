@@ -14,7 +14,7 @@ export default defineConfig({
   srcDir: 'src',
   cleanUrls: true,
   sitemap: {
-    hostname: 'https://test.laoliang.ink/',
+    hostname: 'https://www.laoliang.ink/',
   },
 
   markdown: {
