@@ -40,10 +40,21 @@ defineProps<{
 
 .book-image {
   width: 135px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible;
 }
 
 .image {
+  width: 100%;
+  height: auto;
   border-radius: 4px;
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 10%),
+    0 2px 4px rgb(0 0 0 / 6%);
+  display: block;
+  object-fit: cover;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .book-info {
