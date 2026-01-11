@@ -10,6 +10,7 @@ date: 2021-10-25 19:25:21
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -208,3 +209,6 @@ CORS 是现代 Web 开发中的重要机制，它帮助浏览器保护用户数�
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/22' lastUpdated='2024-10-20 17:30:11' />
+
+
+<BackToTop />

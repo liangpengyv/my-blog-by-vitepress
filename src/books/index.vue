@@ -12,6 +12,7 @@
       <BookCard v-for="book in booksData.wish" :key="book.item.douban_id" :book="book" />
     </TabPane>
   </Tabs>
+  <BackToTop />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +20,7 @@ import { data as booksData } from '../_data/books.data'
 import Tabs from '../_components/Tabs.vue'
 import TabPane from '../_components/TabPane.vue'
 import BookCard from '../_components/BookCard.vue'
+import BackToTop from '../_components/BackToTop.vue'
 </script>
 
 <style scoped>

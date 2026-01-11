@@ -10,6 +10,7 @@ date: 2016-11-26 10:31:27
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -96,3 +97,6 @@ mysql> select avg(score)
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/9' lastUpdated='2024-10-20 17:07:33' />
+
+
+<BackToTop />

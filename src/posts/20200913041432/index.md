@@ -10,6 +10,7 @@ date: 2020-09-12 20:14:32
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -129,3 +130,6 @@ git stash 这个命令看起简单，但在开发工作中真是个大救星！�
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/18' lastUpdated='2024-10-20 17:20:46' />
+
+
+<BackToTop />

@@ -10,6 +10,7 @@ date: 2020-06-01 09:44:27
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -153,3 +154,6 @@ forEach 是一个简洁的遍历工具，但它的不可中断性让它在某些
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/15' lastUpdated='2024-10-20 17:20:05' />
+
+
+<BackToTop />

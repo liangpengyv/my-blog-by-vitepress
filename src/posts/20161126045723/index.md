@@ -10,6 +10,7 @@ date: 2016-11-25 20:57:23
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -52,3 +53,6 @@ public class Wind extends Instrument {
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/8' lastUpdated='2024-10-20 17:05:36' />
+
+
+<BackToTop />

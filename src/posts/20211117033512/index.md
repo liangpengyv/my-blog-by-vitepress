@@ -10,6 +10,7 @@ date: 2021-11-16 19:35:12
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -170,3 +171,6 @@ Vue 3 内部根据环境决定使用何种微任务，比如优先使用 queueMi
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/25' lastUpdated='2024-10-20 17:31:11' />
+
+
+<BackToTop />

@@ -10,6 +10,7 @@ date: 2021-03-20 21:50:35
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -154,3 +155,6 @@ HTML5 为 `<script>` 元素定义了 `async` 属性。从改变脚本处理方�
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/21' lastUpdated='2024-10-20 17:29:50' />
+
+
+<BackToTop />

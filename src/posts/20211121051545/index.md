@@ -10,6 +10,7 @@ date: 2021-11-20 21:15:45
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -150,3 +151,6 @@ function debounceThrottle(func, delay, interval) {
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/26' lastUpdated='2024-10-20 17:31:30' />
+
+
+<BackToTop />

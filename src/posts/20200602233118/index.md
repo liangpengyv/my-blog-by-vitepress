@@ -10,6 +10,7 @@ date: 2020-06-02 15:31:18
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -199,3 +200,6 @@ JavaScript 对象的创建方式，从最简单的字面量，到构造函数模
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/16' lastUpdated='2024-10-20 17:20:18' />
+
+
+<BackToTop />

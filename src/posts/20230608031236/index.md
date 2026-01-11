@@ -10,6 +10,7 @@ date: 2023-06-07 19:12:36
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -52,3 +53,6 @@ console.log(Math.floor(-5.67)); // 输出: -6
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/35' lastUpdated='2024-10-20 17:38:07' />
+
+
+<BackToTop />

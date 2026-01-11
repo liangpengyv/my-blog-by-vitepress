@@ -8,6 +8,7 @@
     </button>
     <Loading class="load-more-loading" v-if="isLoading" />
   </div>
+  <BackToTop />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +16,7 @@ import { data as postsData } from './_data/posts.data'
 import PostCardList from './_components/PostCardList.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import Loading from './_components/Loading.vue'
+import BackToTop from './_components/BackToTop.vue'
 
 const perPage = 10
 const currentPage = ref(1)

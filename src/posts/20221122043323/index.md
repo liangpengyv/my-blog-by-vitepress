@@ -10,6 +10,7 @@ date: 2022-11-21 20:33:23
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -157,3 +158,6 @@ console.log(fib.next().value); // 8
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/32' lastUpdated='2024-10-20 17:34:22' />
+
+
+<BackToTop />

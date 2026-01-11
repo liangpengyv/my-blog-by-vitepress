@@ -10,6 +10,7 @@ date: 2023-01-02 17:21:53
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -93,3 +94,6 @@ unproxy
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/34' lastUpdated='2024-10-20 17:35:27' />
+
+
+<BackToTop />

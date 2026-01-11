@@ -10,6 +10,7 @@ date: 2023-10-19 22:19:11
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -164,3 +165,6 @@ HTTP/2 Push 是 HTTP/2 协议中的一项功能，允许服务器在客户端请
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/36' lastUpdated='2024-10-20 17:38:18' />
+
+
+<BackToTop />

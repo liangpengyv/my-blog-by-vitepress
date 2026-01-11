@@ -10,6 +10,7 @@ date: 2016-11-18 16:16:22
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -127,3 +128,6 @@ y.c = 'z';
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/7' lastUpdated='2024-10-20 17:04:39' />
+
+
+<BackToTop />

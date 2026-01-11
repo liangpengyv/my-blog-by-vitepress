@@ -10,6 +10,7 @@ date: 2022-11-22 23:13:11
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -178,3 +179,6 @@ usedFunction();
 在实际项目中，优化 CRP 是一个持续的过程。建议借助 Chrome DevTools 等工具，实时监控性能瓶颈，并逐步优化。优化后的页面不仅能显著提升加载速度，也能提高用户的访问体验，带来更高的转化率。
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/33' lastUpdated='2024-10-20 17:34:40' />
+
+
+<BackToTop />

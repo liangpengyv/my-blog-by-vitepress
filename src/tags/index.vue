@@ -15,12 +15,14 @@
   </div>
   <h2>{{ activeTagPosts?.tag }}</h2>
   <PostList :posts="activeTagPosts?.posts || []" />
+  <BackToTop />
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { data as tagsData } from '../_data/tags.data'
 import PostList from '../_components/PostList.vue'
+import BackToTop from '../_components/BackToTop.vue'
 
 const activeTag = ref('')
 const activeTagPosts = computed(() => tagsData.find((tag) => tag.tag === activeTag.value))

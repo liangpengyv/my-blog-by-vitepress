@@ -10,6 +10,7 @@ date: 2021-03-13 22:37:31
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -123,3 +124,6 @@ git branch -d feature/xxx
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/20' lastUpdated='2024-10-20 17:26:46' />
+
+
+<BackToTop />

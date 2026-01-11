@@ -27,6 +27,7 @@ const parsePostContent = (post: Post) => {
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 `
   const postHeader = `
@@ -35,6 +36,10 @@ import EditInfo from '../../_components/EditInfo.vue'
 
   const editInfo = `
 <EditInfo editLink='${post.html_url}' lastUpdated='${formatDisplayDate(new Date(post.updated_at))}' />
+`
+
+  const backToTop = `
+<BackToTop />
 `
 
   const frontmatterObj = frontmatter(post.content)
@@ -47,6 +52,7 @@ ${importVue}
 ${postHeader}
 ${frontmatterObj.body}
 ${editInfo}
+${backToTop}
 `.trim()
 }
 

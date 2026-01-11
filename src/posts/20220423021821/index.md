@@ -10,6 +10,7 @@ date: 2022-04-22 18:18:21
 <script setup lang="ts">
 import PostHeader from '../../_components/PostHeader.vue'
 import EditInfo from '../../_components/EditInfo.vue'
+import BackToTop from '../../_components/BackToTop.vue'
 </script>
 
 
@@ -119,3 +120,6 @@ git config --global i18n.logoutputencoding utf-8
 
 
 <EditInfo editLink='https://github.com/liangpengyv/my-blog-by-fluxpress/issues/30' lastUpdated='2024-11-16 19:37:50' />
+
+
+<BackToTop />
